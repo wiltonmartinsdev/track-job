@@ -1,59 +1,104 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import JobForm, { Job } from "./components/JobForm";
 import JobList from "./components/JobList";
+import { api } from "./services/api";
 
 export default function App() {
-    const [jobs, setJobs] = useState<Job[]>([]);
-    const [editingIndex, setEditingIndex] = useState<number | null>(null);
+	const [jobs, setJobs] = useState<Job[]>([]);
+	const [jobEditionId, setJobEditionId] = useState<number | null>(null);
 
-    const handleAddJob = (job: Job) => {
-        if (editingIndex !== null) {
-            const updatedJobs = jobs.map((j, index) =>
-                index === editingIndex ? job : j
-            );
-            setJobs(updatedJobs);
-            setEditingIndex(null);
-        } else {
-            setJobs([...jobs, job]);
-        }
-    };
+	async function addJob(job: Job) {
+		try {
+			const response = await api.post("", job);
+			setJobs([...jobs, response.data]);
+		} catch (error) {
+			console.error("Erro ao adicionar job:", error);
+		}
+	}
 
-    const handleUpdateStatus = (index: number, status: string) => {
-        const updatedJobs = jobs.map((job, i) =>
-            i === index ? { ...job, status } : job
-        );
-        setJobs(updatedJobs);
-    };
+	async function updateJob(job: Job) {
+		if (jobEditionId !== null) {
+			try {
+				await api.put(`/${jobEditionId}`, job);
+				const updatedJobs = jobs.map((j, index) =>
+					index === jobEditionId ? job : j
+				);
+				setJobs(updatedJobs);
+				setJobEditionId(null);
+			} catch (error) {
+				console.error("Erro ao atualizar job:", error);
+			}
+		}
+	}
 
-    const handleEditJob = (index: number) => {
-        setEditingIndex(index);
-    };
+	function handleAddJob(job: Job) {
+		if (jobEditionId !== null) {
+			updateJob(job);
+		} else {
+			addJob(job);
+		}
+	}
 
-    const handleDeleteJob = (index: number) => {
-        const updatedJobs = jobs.filter((_, i) => i !== index);
-        setJobs(updatedJobs);
-    };
+	async function handleUpdateStatus(index: number, status: string) {
+		const job = jobs[index];
+		try {
+			await api.put(`/${job.id}`, { ...job, status });
+			const updatedJobs = jobs.map((j, i) =>
+				i === index ? { ...j, status } : j
+			);
+			setJobs(updatedJobs);
+		} catch (error) {
+			console.error("Erro ao atualizar status do job:", error);
+		}
+	}
 
-    const editingJob = editingIndex !== null ? jobs[editingIndex] : null;
+	function handleEditJob(id: number) {
+		setJobEditionId(id);
+	}
 
-    return (
-        <div>
-            <header className="bg-blue-600 text-white text-center p-4">
-                <h1 className="text-2xl">Acompanhamento de Candidaturas</h1>
-                <p>Total de candidaturas: {jobs.length}</p>
-            </header>
+	async function handleDeleteJob(id: number) {
+		try {
+			await api.delete(`/${id}`);
+			const updatedJobs = jobs.filter((job) => job.id !== id);
+			setJobs(updatedJobs);
+		} catch (error) {
+			console.error("Erro ao deletar job:", error);
+		}
+	}
 
-            <JobForm
-                onAdd={handleAddJob}
-                editingJob={editingJob}
-            />
-            <JobList
-                jobs={jobs}
-                onUpdateStatus={handleUpdateStatus}
-                onEditJob={handleEditJob}
-                onDeleteJob={handleDeleteJob}
-            />
-        </div>
-    );
+	// Carregar jobs do back-end ao montar o componente
+	useEffect(() => {
+		async function fetchJobs() {
+			try {
+				const response = await api.get("/");
+
+				setJobs(response.data);
+			} catch (error) {
+				console.error("Erro ao carregar jobs:", error);
+			}
+		}
+		fetchJobs();
+	}, [jobs]);
+
+	const editingJob = jobEditionId !== null ? jobs[jobEditionId] : null;
+	return (
+		<div>
+			<header className="bg-blue-600 text-white text-center p-4">
+				<h1 className="text-2xl">Acompanhamento de Candidaturas</h1>
+				<p>Total de candidaturas: {jobs.length}</p>
+			</header>
+
+			<JobForm
+				onAdd={handleAddJob}
+				editingJob={editingJob}
+			/>
+			<JobList
+				jobs={jobs}
+				onUpdateStatus={handleUpdateStatus}
+				onEditJob={handleEditJob}
+				onDeleteJob={handleDeleteJob}
+			/>
+		</div>
+	);
 }
