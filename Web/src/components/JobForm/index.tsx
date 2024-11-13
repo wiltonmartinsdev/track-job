@@ -2,14 +2,15 @@ import { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 export type Job = {
-	empresa: string;
-	cargo: string;
-	nivel: string;
+	id: number
+	company_name: string;
+	position: string;
+	seniority_level: string;
 	status: string;
-	modalidade: string;
-	regime: string;
-	localidade: string;
-	dataAplicacao?: string;
+	vacancy_modality: string;
+	work_regime: string;
+	place: string;
+	created_at?: string;
 };
 
 type JobFormProps = {
@@ -17,7 +18,7 @@ type JobFormProps = {
 	editingJob?: Job | null;
 };
 
-const estadosBrasileiros = [
+const brazilianStates = [
 	"Acre",
 	"Alagoas",
 	"Amapá",
@@ -56,25 +57,28 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 		formState: { errors },
 	} = useForm<Job>({
 		defaultValues: {
-			empresa: "",
-			cargo: "Desenvolvedor Front-end",
-			nivel: "Júnior",
+			company_name: "",
+			position: "Desenvolvedor Front-end",
+			seniority_level: "Júnior",
 			status: "Enviada",
-			modalidade: "Remota",
-			regime: "CLT",
-			localidade: "", // Valor padrão para a localidade
+			vacancy_modality: "Remota",
+			work_regime: "CLT",
+			place: "", // Valor padrão para a localidade
 		},
 	});
 
 	useEffect(() => {
 		if (editingJob) {
-			setValue("empresa", editingJob.empresa);
-			setValue("cargo", editingJob.cargo);
-			setValue("nivel", editingJob.nivel);
+            console.log("editingJob =>", editingJob);
+            
+
+			setValue("company_name", editingJob.company_name);
+			setValue("position", editingJob.position);
+			setValue("seniority_level", editingJob.seniority_level);
 			setValue("status", editingJob.status);
-			setValue("modalidade", editingJob.modalidade);
-			setValue("regime", editingJob.regime);
-			setValue("localidade", editingJob.localidade); // Setando valor da localidade
+			setValue("vacancy_modality", editingJob.vacancy_modality);
+			setValue("work_regime", editingJob.work_regime);
+			setValue("place", editingJob.place); // Setando valor da localidade
 		}
 	}, [editingJob, setValue]);
 
@@ -90,15 +94,15 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 			<div className="mb-4">
 				<label className="block text-gray-700">Nome da empresa</label>
 				<input
-					{...register("empresa", {
+					{...register("company_name", {
 						required: "Este campo é obrigatório",
 					})}
 					type="text"
 					className="border rounded w-full p-2"
 				/>
-				{errors.empresa && (
+				{errors.company_name && (
 					<p className="text-red-500 text-sm">
-						{errors.empresa.message}
+						{errors.company_name.message}
 					</p>
 				)}
 			</div>
@@ -108,7 +112,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 				<div className="flex space-x-4">
 					<label className="flex items-center">
 						<input
-							{...register("cargo", {
+							{...register("position", {
 								required: "Este campo é obrigatório",
 							})}
 							type="radio"
@@ -119,7 +123,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 					</label>
 					<label className="flex items-center">
 						<input
-							{...register("cargo", {
+							{...register("position", {
 								required: "Este campo é obrigatório",
 							})}
 							type="radio"
@@ -130,7 +134,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 					</label>
 					<label className="flex items-center">
 						<input
-							{...register("cargo", {
+							{...register("position", {
 								required: "Este campo é obrigatório",
 							})}
 							type="radio"
@@ -140,9 +144,9 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 						Desenvolvedor FullStack
 					</label>
 				</div>
-				{errors.cargo && (
+				{errors.position && (
 					<p className="text-red-500 text-sm">
-						{errors.cargo.message}
+						{errors.position.message}
 					</p>
 				)}
 			</div>
@@ -154,7 +158,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 				<div className="flex space-x-4">
 					<label className="flex items-center">
 						<input
-							{...register("nivel", {
+							{...register("seniority_level", {
 								required: "Este campo é obrigatório",
 							})}
 							type="radio"
@@ -165,7 +169,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 					</label>
 					<label className="flex items-center">
 						<input
-							{...register("nivel", {
+							{...register("seniority_level", {
 								required: "Este campo é obrigatório",
 							})}
 							type="radio"
@@ -176,7 +180,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 					</label>
 					<label className="flex items-center">
 						<input
-							{...register("nivel", {
+							{...register("seniority_level", {
 								required: "Este campo é obrigatório",
 							})}
 							type="radio"
@@ -186,9 +190,9 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 						Sênior
 					</label>
 				</div>
-				{errors.nivel && (
+				{errors.seniority_level && (
 					<p className="text-red-500 text-sm">
-						{errors.nivel.message}
+						{errors.seniority_level.message}
 					</p>
 				)}
 			</div>
@@ -200,7 +204,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 				<div className="flex space-x-4">
 					<label className="flex items-center">
 						<input
-							{...register("modalidade", {
+							{...register("vacancy_modality", {
 								required: "Este campo é obrigatório",
 							})}
 							type="radio"
@@ -211,7 +215,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 					</label>
 					<label className="flex items-center">
 						<input
-							{...register("modalidade", {
+							{...register("vacancy_modality", {
 								required: "Este campo é obrigatório",
 							})}
 							type="radio"
@@ -222,7 +226,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 					</label>
 					<label className="flex items-center">
 						<input
-							{...register("modalidade", {
+							{...register("vacancy_modality", {
 								required: "Este campo é obrigatório",
 							})}
 							type="radio"
@@ -232,9 +236,9 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 						Presencial
 					</label>
 				</div>
-				{errors.modalidade && (
+				{errors.vacancy_modality && (
 					<p className="text-red-500 text-sm">
-						{errors.modalidade.message}
+						{errors.vacancy_modality.message}
 					</p>
 				)}
 			</div>
@@ -246,7 +250,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 				<div className="flex space-x-4">
 					<label className="flex items-center">
 						<input
-							{...register("regime", {
+							{...register("work_regime", {
 								required: "Este campo é obrigatório",
 							})}
 							type="radio"
@@ -257,7 +261,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 					</label>
 					<label className="flex items-center">
 						<input
-							{...register("regime", {
+							{...register("work_regime", {
 								required: "Este campo é obrigatório",
 							})}
 							type="radio"
@@ -267,9 +271,9 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 						PJ
 					</label>
 				</div>
-				{errors.regime && (
+				{errors.work_regime && (
 					<p className="text-red-500 text-sm">
-						{errors.regime.message}
+						{errors.work_regime.message}
 					</p>
 				)}
 			</div>
@@ -277,12 +281,12 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 			<div className="mb-4">
 				<label className="block text-gray-700">Localidade</label>
 				<select
-					{...register("localidade", {
+					{...register("place", {
 						required: "Este campo é obrigatório",
 					})}
 					className="border rounded w-full p-2">
 					<option value="">Selecione um estado</option>
-					{estadosBrasileiros.map((estado) => (
+					{brazilianStates.map((estado) => (
 						<option
 							key={estado}
 							value={estado}>
@@ -290,9 +294,9 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 						</option>
 					))}
 				</select>
-				{errors.localidade && (
+				{errors.place && (
 					<p className="text-red-500 text-sm">
-						{errors.localidade.message}
+						{errors.place.message}
 					</p>
 				)}
 			</div>
