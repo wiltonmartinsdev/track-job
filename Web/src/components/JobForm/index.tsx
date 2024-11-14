@@ -200,14 +200,17 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 			onSubmit={handleSubmit(onSubmit)}
 			className="p-4 bg-gray-100 shadow-md rounded">
 			{/* Field for choosing the company name */}
-			<div className="mb-4">
-				<Label>Nome da empresa</Label>
+			<div className="mb-4 flex flex-col gap-2">
+				<Label
+					className="font-roboto-flex font-black text-lg
+                ">
+					Nome da empresa
+				</Label>
 				<Input
 					{...register("company_name", {
 						required: "O nome da empresa é obrigatório!",
 					})}
 					type="text"
-					className="mb-4"
 				/>
 				{errors.company_name && (
 					<p className="text-red-500 text-sm">
@@ -217,8 +220,12 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 			</div>
 
 			{/* Field for choosing the position */}
-			<div className="mb-4 flex flex-col gap-2">
-				<Label>Cargo</Label>
+			<div className="mb-8 flex flex-col gap-2">
+				<Label
+					className="font-roboto-flex font-black text-lg
+                ">
+					Cargo
+				</Label>
 				<RadioGroup
 					className="flex"
 					value={selectedPosition}
@@ -259,8 +266,12 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 			</div>
 
 			{/* Field for choosing seniority level */}
-			<div className="mb-4 flex flex-col gap-2">
-				<label>Nível de senioridade</label>
+			<div className="mb-8 flex flex-col gap-2">
+				<label
+					className="font-roboto-flex font-black text-lg
+                ">
+					Nível de senioridade
+				</label>
 				<RadioGroup
 					className="flex"
 					value={selectedSeniorityLevel}
@@ -303,8 +314,12 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 			</div>
 
 			{/* Field for choosing the type of vacancy */}
-			<div className="mb-4 flex flex-col gap-2">
-				<label>Modalidade da vaga</label>
+			<div className="mb-8 flex flex-col gap-2">
+				<label
+					className="font-roboto-flex font-black text-lg
+                ">
+					Modalidade da vaga
+				</label>
 				<RadioGroup
 					className="flex"
 					value={selectedVacancyModality}
@@ -347,8 +362,12 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 			</div>
 
 			{/* Field for choosing the work regime */}
-			<div className="mb-4 flex flex-col gap-2">
-				<label>Regime de trabalho</label>
+			<div className="mb-8 flex flex-col gap-2">
+				<label
+					className="font-roboto-flex font-black text-lg
+                ">
+					Regime de trabalho
+				</label>
 				<RadioGroup
 					className="flex"
 					value={selectedWorkRegime}
@@ -378,8 +397,12 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 			</div>
 
 			{/* Field for selection of Brazilian states */}
-			<div className="mb-4 flex flex-col gap-2">
-				<Label>Localidade</Label>
+			<div className="mb-8 flex flex-col gap-2">
+				<Label
+					className="font-roboto-flex font-black text-lg
+                ">
+					Localidade
+				</Label>
 
 				<Popover
 					open={open}
@@ -450,7 +473,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 				type="submit"
 				className="focus-visible:ring-blue-400 focus-visible:ring-4"
 				tabIndex={0}>
-				Adicionar Candidatura
+				Cadastrar Candidatura
 			</Button>
 		</form>
 	);
