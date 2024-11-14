@@ -440,11 +440,11 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 				)}
 			</div>
 
-			<button
+			<Button
 				type="submit"
-				className="bg-blue-500 text-white p-2 rounded">
+				className="">
 				Adicionar Candidatura
-			</button>
+			</Button>
 		</form>
 	);
 }
