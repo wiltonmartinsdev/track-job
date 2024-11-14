@@ -206,6 +206,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 						required: "Este campo é obrigatório",
 					})}
 					type="text"
+                    className="mb-4"
 				/>
 				{errors.company_name && (
 					<p className="text-red-500 text-sm">
@@ -216,7 +217,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 
 			{/* Field for choosing the position */}
 			<div className="mb-4 flex flex-col gap-2">
-				<Label className="">Cargo</Label>
+				<Label>Cargo</Label>
 				<RadioGroup
 					className="flex"
 					value={selectedPosition}
@@ -388,6 +389,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 							role="combobox"
 							aria-expanded={open}
 							className="w-[200px] justify-between"
+                            tabIndex={0}
 							{...register("place", {
 								required: "Este campo é obrigatório",
 							})}>
@@ -412,6 +414,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 										<CommandItem
 											key={stateBr.value}
 											value={stateBr.value}
+                                            tabIndex={0}
 											onSelect={(currentValue) => {
 												setValue("place", currentValue);
 												setOpen(false);
@@ -442,7 +445,8 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 
 			<Button
 				type="submit"
-				className="">
+				className="focus-visible:ring-blue-400 focus-visible:ring-4"
+                tabIndex={0}>
 				Adicionar Candidatura
 			</Button>
 		</form>
