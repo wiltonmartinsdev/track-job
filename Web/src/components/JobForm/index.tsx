@@ -152,6 +152,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 		reset,
 		setValue,
 		watch,
+		clearErrors,
 		formState: { errors },
 	} = useForm<Job>({
 		defaultValues: {
@@ -203,10 +204,10 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 				<Label>Nome da empresa</Label>
 				<Input
 					{...register("company_name", {
-						required: "Este campo é obrigatório",
+						required: "O nome da empresa é obrigatório!",
 					})}
 					type="text"
-                    className="mb-4"
+					className="mb-4"
 				/>
 				{errors.company_name && (
 					<p className="text-red-500 text-sm">
@@ -389,9 +390,11 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 							role="combobox"
 							aria-expanded={open}
 							className="w-[200px] justify-between"
-                            tabIndex={0}
+							onFocus={() => clearErrors("place")}
+							tabIndex={0}
 							{...register("place", {
-								required: "Este campo é obrigatório",
+								required:
+									"A seleção de um estado é obrigatória!",
 							})}>
 							{selectedPlace
 								? brazilianStates.find(
@@ -414,7 +417,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 										<CommandItem
 											key={stateBr.value}
 											value={stateBr.value}
-                                            tabIndex={0}
+											tabIndex={0}
 											onSelect={(currentValue) => {
 												setValue("place", currentValue);
 												setOpen(false);
@@ -446,7 +449,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 			<Button
 				type="submit"
 				className="focus-visible:ring-blue-400 focus-visible:ring-4"
-                tabIndex={0}>
+				tabIndex={0}>
 				Adicionar Candidatura
 			</Button>
 		</form>
