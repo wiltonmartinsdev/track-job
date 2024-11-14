@@ -13,15 +13,7 @@ export default function JobList({
 	onEditJob,
 	onDeleteJob,
 }: JobListProps) {
-
-    console.log("jobs =>", jobs);
-    
-
 	return (
-        
-        
-        
-
 		<table className="w-full text-left mt-4">
 			<thead>
 				<tr className="bg-gray-200">
