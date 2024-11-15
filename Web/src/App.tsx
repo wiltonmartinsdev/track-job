@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 
 import JobForm, { Job } from "./components/JobForm";
 import JobList from "./components/JobList";
+import { ScrollIndicator } from "./components/ScrollIndicator";
 import { api } from "./services/api";
 
 export default function App() {
@@ -85,8 +86,12 @@ export default function App() {
 	return (
 		<div>
 			<header className="bg-blue-600 text-white text-center p-4">
-				<h1 className="font-roboto-flex font-black text-2xl">Acompanhamento de Candidaturas</h1>
-				<p className="font-roboto-flex font-black">Total de candidaturas: {jobs.length}</p>
+				<h1 className="font-roboto-flex font-black text-2xl">
+					Acompanhamento de Candidaturas
+				</h1>
+				<p className="font-roboto-flex font-black">
+					Total de candidaturas: {jobs.length}
+				</p>
 			</header>
 
 			<main className="flex justify-center items-center h-[calc(100vh-88px)]">
@@ -95,6 +100,11 @@ export default function App() {
 					editingJob={editingJob}
 				/>
 			</main>
+
+			<ScrollIndicator
+				targetSection="#jobList"
+				arrowColor="#2563eb"
+			/>
 
 			<footer>
 				<JobList
