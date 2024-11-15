@@ -199,7 +199,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 	return (
 		<form
 			onSubmit={handleSubmit(onSubmit)}
-			className="p-4 bg-gray-100 shadow-md rounded">
+			className="p-4 bg-gray-100 shadow-md  w-1/2 rounded-md drop-shadow-xl">
 			{/* Field for choosing the company name */}
 			<div className="mb-4 flex flex-col gap-2">
 				<Label
@@ -470,12 +470,14 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 				)}
 			</div>
 
-			<Button
+			<div className="flex justify-center">
+            <Button
 				type="submit"
 				className="focus-visible:ring-blue-400 focus-visible:ring-4"
 				tabIndex={0}>
 				Cadastrar Candidatura
 			</Button>
+            </div>
 		</form>
 	);
 }
