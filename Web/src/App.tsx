@@ -89,16 +89,21 @@ export default function App() {
 				<p>Total de candidaturas: {jobs.length}</p>
 			</header>
 
-			<JobForm
-				onAdd={handleAddJob}
-				editingJob={editingJob}
-			/>
-			<JobList
-				jobs={jobs}
-				onUpdateStatus={handleUpdateStatus}
-				onEditJob={handleEditJob}
-				onDeleteJob={handleDeleteJob}
-			/>
+			<main className="flex justify-center items-center h-[calc(100vh-88px)]">
+				<JobForm
+					onAdd={handleAddJob}
+					editingJob={editingJob}
+				/>
+			</main>
+
+			<footer>
+				<JobList
+					jobs={jobs}
+					onUpdateStatus={handleUpdateStatus}
+					onEditJob={handleEditJob}
+					onDeleteJob={handleDeleteJob}
+				/>
+			</footer>
 		</div>
 	);
 }
