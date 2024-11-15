@@ -85,8 +85,8 @@ export default function App() {
 	return (
 		<div>
 			<header className="bg-blue-600 text-white text-center p-4">
-				<h1 className="text-2xl">Acompanhamento de Candidaturas</h1>
-				<p>Total de candidaturas: {jobs.length}</p>
+				<h1 className="font-roboto-flex font-black text-2xl">Acompanhamento de Candidaturas</h1>
+				<p className="font-roboto-flex font-black">Total de candidaturas: {jobs.length}</p>
 			</header>
 
 			<main className="flex justify-center items-center h-[calc(100vh-88px)]">
