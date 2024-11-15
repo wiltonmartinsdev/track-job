@@ -2,11 +2,17 @@ import {
 	Table,
 	TableBody,
 	TableCell,
-	// TableFooter,
 	TableHead,
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectTrigger,
+} from "@/components/ui/select";
 import { Job } from "../JobForm";
 
 type JobListProps = {
@@ -43,30 +49,50 @@ export default function JobList({
 				{jobs.map((job, index) => (
 					<TableRow key={index}>
 						<TableCell className="text-center">{job.id}</TableCell>
-						<TableCell className="text-center">{job.company_name}</TableCell>
+						<TableCell className="text-center">
+							{job.company_name}
+						</TableCell>
 						<TableCell>{job.position}</TableCell>
 						<TableCell className="text-center">
 							{job.seniority_level}
 						</TableCell>
-						<TableCell className="text-center">{job.vacancy_modality}</TableCell>
-						<TableCell className="text-center">{job.work_regime}</TableCell>
-						<TableCell className="text-center">{job.place}</TableCell>
+						<TableCell className="text-center">
+							{job.vacancy_modality}
+						</TableCell>
+						<TableCell className="text-center">
+							{job.work_regime}
+						</TableCell>
+						<TableCell className="text-center">
+							{job.place}
+						</TableCell>
 						<TableCell>{job.created_at}</TableCell>
 						<TableCell>{job.updated_at}</TableCell>
 						<TableCell>
-							<select
-								value={job.status}
-								onChange={(e) =>
-									onUpdateStatus(index, e.target.value)
+							<Select
+								
+                                value={job.status}
+								onValueChange={(value) =>
+									onUpdateStatus(index, value)
 								}
-								className="border rounded p-1">
-								<option value="Enviada">Enviada</option>
-								<option value="Em seleção">Em seleção</option>
-								<option value="Não selecionado">
-									Não selecionado
-								</option>
-								<option value="Contratado">Contratado</option>
-							</select>
+								>
+								<SelectTrigger tabIndex={0}>{job.status}</SelectTrigger>
+								<SelectContent >
+									<SelectGroup>
+										<SelectItem value="Enviada">
+											Enviada
+										</SelectItem>
+										<SelectItem value="Em seleção">
+											Em seleção
+										</SelectItem>
+										<SelectItem value="Não selecionado">
+											Não selecionado
+										</SelectItem>
+										<SelectItem value="Contratado">
+											Contratado
+										</SelectItem>
+									</SelectGroup>
+								</SelectContent>
+							</Select>
 						</TableCell>
 						<TableCell>
 							<button
