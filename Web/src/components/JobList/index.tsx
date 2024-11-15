@@ -30,7 +30,7 @@ export default function JobList({
 	onDeleteJob,
 }: JobListProps) {
 	return (
-		<Table>
+		<Table id="jobList" className="scroll-mt-[35px]">
 			<TableHeader>
 				<TableRow>
 					<TableHead className="text-center">Id</TableHead>
