@@ -32,6 +32,7 @@ export type Job = {
 	work_regime: string;
 	place: string;
 	created_at?: string;
+	updated_at?: string;
 };
 
 type JobFormProps = {
@@ -318,7 +319,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 				<label
 					className="font-roboto-flex font-black text-lg
                 ">
-					Modalidade da vaga
+					Modalidade
 				</label>
 				<RadioGroup
 					className="flex"
