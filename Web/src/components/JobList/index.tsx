@@ -1,3 +1,12 @@
+import {
+	Table,
+	TableBody,
+	TableCell,
+	// TableFooter,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/components/ui/table";
 import { Job } from "../JobForm";
 
 type JobListProps = {
@@ -14,33 +23,37 @@ export default function JobList({
 	onDeleteJob,
 }: JobListProps) {
 	return (
-		<table className="w-full text-left mt-4">
-			<thead>
-				<tr className="bg-gray-200">
-					<th className="p-2">Nome da Empresa</th>
-					<th className="p-2">Cargo</th>
-					<th className="p-2">Nível de Senioridade</th>
-					<th className="p-2">Modalidade</th>
-					<th className="p-2">Regime</th>
-					<th className="p-2">Localidade</th>
-					<th className="p-2">Data da candidatura</th>
-					<th className="p-2">Status</th>
-					<th className="p-2">Ações</th>
-				</tr>
-			</thead>
-			<tbody>
+		<Table>
+			<TableHeader>
+				<TableRow>
+					<TableHead className="text-center">Id</TableHead>
+					<TableHead className="text-center">Empresa</TableHead>
+					<TableHead className="text-center">Cargo</TableHead>
+					<TableHead>Nível</TableHead>
+					<TableHead>Modalidade</TableHead>
+					<TableHead>Regime</TableHead>
+					<TableHead className="text-center">Localidade</TableHead>
+					<TableHead className="text-center">Data</TableHead>
+					<TableHead className="text-center">Atualização</TableHead>
+					<TableHead className="text-center">Status</TableHead>
+					<TableHead className="text-center">Ações</TableHead>
+				</TableRow>
+			</TableHeader>
+			<TableBody>
 				{jobs.map((job, index) => (
-					<tr
-						key={index}
-						className="border-t">
-						<td className="p-2">{job.company_name}</td>
-						<td className="p-2">{job.position}</td>
-						<td className="p-2">{job.seniority_level}</td>
-						<td className="p-2">{job.vacancy_modality}</td>
-						<td className="p-2">{job.work_regime}</td>
-						<td className="p-2">{job.place}</td>
-						<td className="p-2">{job.created_at}</td>
-						<td className="p-2">
+					<TableRow key={index}>
+						<TableCell className="text-center">{job.id}</TableCell>
+						<TableCell className="text-center">{job.company_name}</TableCell>
+						<TableCell>{job.position}</TableCell>
+						<TableCell className="text-center">
+							{job.seniority_level}
+						</TableCell>
+						<TableCell className="text-center">{job.vacancy_modality}</TableCell>
+						<TableCell className="text-center">{job.work_regime}</TableCell>
+						<TableCell className="text-center">{job.place}</TableCell>
+						<TableCell>{job.created_at}</TableCell>
+						<TableCell>{job.updated_at}</TableCell>
+						<TableCell>
 							<select
 								value={job.status}
 								onChange={(e) =>
@@ -54,8 +67,8 @@ export default function JobList({
 								</option>
 								<option value="Contratado">Contratado</option>
 							</select>
-						</td>
-						<td className="p-2">
+						</TableCell>
+						<TableCell>
 							<button
 								onClick={() => onEditJob(index)}
 								className="bg-yellow-500 text-white p-1 rounded mr-2">
@@ -66,10 +79,10 @@ export default function JobList({
 								className="bg-red-500 text-white p-1 rounded">
 								Apagar
 							</button>
-						</td>
-					</tr>
+						</TableCell>
+					</TableRow>
 				))}
-			</tbody>
-		</table>
+			</TableBody>
+		</Table>
 	);
 }
