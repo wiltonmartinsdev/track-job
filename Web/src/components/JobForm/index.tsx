@@ -417,7 +417,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 								role="combobox"
 								aria-expanded={open}
 								className="w-[200px] justify-between"
-								onFocus={() => clearErrors("place")}
+								onClick={() => clearErrors("place")}
 								tabIndex={0}
 								{...register("place", {
 									required:
@@ -451,6 +451,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 														currentValue
 													);
 													setOpen(false);
+													clearErrors("place");
 												}}>
 												{stateBr.label}
 												<Check
