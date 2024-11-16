@@ -1,3 +1,9 @@
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
 import { useState, useEffect } from "react";
 
 import JobForm, { Job } from "./components/JobForm";
@@ -8,6 +14,7 @@ import { api } from "./services/api";
 export default function App() {
 	const [jobs, setJobs] = useState<Job[]>([]);
 	const [jobEditionId, setJobEditionId] = useState<number | null>(null);
+	const [isDialogOpen, setIsDialogOpen] = useState(false);
 
 	async function addJob(job: Job) {
 		try {
@@ -39,6 +46,7 @@ export default function App() {
 		} else {
 			addJob(job);
 		}
+		setIsDialogOpen(false);
 	}
 
 	async function handleUpdateStatus(index: number, status: string) {
@@ -56,6 +64,7 @@ export default function App() {
 
 	function handleEditJob(id: number) {
 		setJobEditionId(id);
+		setIsDialogOpen(true);
 	}
 
 	async function handleDeleteJob(id: number) {
@@ -95,10 +104,7 @@ export default function App() {
 			</header>
 
 			<main className="flex justify-center items-center h-[calc(100vh-88px)]">
-				<JobForm
-					onAdd={handleAddJob}
-					editingJob={editingJob}
-				/>
+				{!isDialogOpen && <JobForm onAdd={handleAddJob} />}
 			</main>
 
 			<ScrollIndicator
@@ -114,6 +120,20 @@ export default function App() {
 					onDeleteJob={handleDeleteJob}
 				/>
 			</footer>
+
+			<Dialog
+				open={isDialogOpen}
+				onOpenChange={setIsDialogOpen}>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Editar Trabalho</DialogTitle>
+					</DialogHeader>
+					<JobForm
+						onAdd={handleAddJob}
+						editingJob={editingJob}
+					/>
+				</DialogContent>
+			</Dialog>
 		</div>
 	);
 }
