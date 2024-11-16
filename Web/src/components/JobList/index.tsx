@@ -98,7 +98,7 @@ export default function JobList({
 						<TableCell className="flex flex-col gap-2 cursor-pointer">
 							<Button
 								tabIndex={0}
-								onClick={() => onEditJob(index)}
+								onClick={() => onEditJob(job.id)}
 								className="hover:bg-yellow-500 focus-visible:ring-blue-400 focus-visible:ring-4">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"

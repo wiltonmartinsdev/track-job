@@ -200,7 +200,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 		<>
 			<form
 				onSubmit={handleSubmit(onSubmit)}
-				className="p-4 bg-gray-100 shadow-md  w-1/2 rounded-md drop-shadow-xl">
+				className="p-4 bg-gray-100 shadow-md rounded-md drop-shadow-xl">
 				{/* Field for choosing the company name */}
 				<div className="mb-4 flex flex-col gap-2">
 					<Label
@@ -491,11 +491,12 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 								d="M5.116 20q-.691 0-1.153-.462T3.5 18.384V5.616q0-.691.463-1.153T5.115 4h9.308v1H5.116q-.231 0-.424.192t-.192.424v12.769q0 .23.192.423t.423.192h12.77q.23 0 .423-.192t.192-.423V9.077h1v9.308q0 .69-.462 1.153T17.884 20zM8 16.5v-1h7v1zm0-3v-1h7v1zm0-3v-1h7v1zM17.5 8V6h-2V5h2V3h1v2h2v1h-2v2z"
 							/>
 						</svg>
-						Cadastrar Candidatura
+						{editingJob
+							? "Salvar alterações"
+							: "Cadastrar candidatura"}
 					</Button>
 				</div>
 			</form>
-	
 		</>
 	);
 }
