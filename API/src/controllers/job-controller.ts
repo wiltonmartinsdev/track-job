@@ -107,7 +107,7 @@ export default class JobController {
 					work_regime,
 					place,
 					status,
-					updated_at: knex.fn.now(),
+					updated_at: knex.raw("datetime('now', '-3 hours')"), // Modificação aqui
 				})
 				.where({ id });
 
