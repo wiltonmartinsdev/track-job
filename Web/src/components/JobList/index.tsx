@@ -13,6 +13,9 @@ import {
 	SelectItem,
 	SelectTrigger,
 } from "@/components/ui/select";
+import { formatDistance } from "date-fns";
+import { ptBR } from "date-fns/locale";
+
 import { Button } from "../ui/button";
 import { Job } from "../JobForm";
 
@@ -29,12 +32,27 @@ export default function JobList({
 	onEditJob,
 	onDeleteJob,
 }: JobListProps) {
-    function formatDate(dateString: string | undefined): string {
-        if (!dateString) {
-          return '-';
-        }
-        return new Date(dateString).toLocaleDateString('pt-BR');
-      }
+	// Formata data normal
+	function formatDate(dateString: string | undefined): string {
+		if (!dateString) {
+			return "-";
+		}
+		return new Date(dateString).toLocaleDateString("pt-BR");
+	}
+
+	// Formata data relativa
+	function formatRelativeDate(dateString: string | undefined): string {
+		if (!dateString) {
+			return "-";
+		}
+		return `Atualizado há ${formatDistance(
+			new Date(dateString),
+			new Date(),
+			{
+				locale: ptBR,
+			}
+		)}`;
+	}
 
 	return (
 		<Table
@@ -75,8 +93,12 @@ export default function JobList({
 						<TableCell className="text-center">
 							{job.place}
 						</TableCell>
-						<TableCell className="text-center">{formatDate(job.created_at)}</TableCell>
-						<TableCell className="text-center">{formatDate(job.updated_at)}</TableCell>
+						<TableCell className="text-center">
+							{formatDate(job.created_at)}
+						</TableCell>
+						<TableCell className="text-center">
+							{formatRelativeDate(job.updated_at)}
+						</TableCell>
 						<TableCell>
 							<Select
 								value={job.status}
