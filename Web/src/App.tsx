@@ -25,46 +25,61 @@ export default function App() {
 		}
 	}
 
-	async function updateJob(job: Job) {
-		if (jobEditionId !== null) {
-			try {
-				await api.put(`/${jobEditionId}`, job);
-				const updatedJobs = jobs.map((j, index) =>
-					index === jobEditionId ? job : j
-				);
-				setJobs(updatedJobs);
-				setJobEditionId(null);
-			} catch (error) {
-				console.error("Erro ao atualizar job:", error);
-			}
-		}
-	}
+    async function updateJob(job: Job) {
+        if (jobEditionId !== null) {
+          try {
+            const response = await api.put(`/${jobEditionId}`, job);
+            const updatedJobs = jobs.map((j) =>
+              j.id === jobEditionId ? response.data : j
+            );
+            setJobs(updatedJobs);
+            setJobEditionId(null);
+            return response.data;
+          } catch (error) {
+            console.error("Erro ao atualizar job:", error);
+            throw error;
+          }
+        }
+      }
 
-	function handleAddJob(job: Job) {
-		if (jobEditionId !== null) {
-			updateJob(job);
-		} else {
-			addJob(job);
-		}
-		setIsDialogOpen(false);
-	}
+      async function handleAddJob(job: Job) {
+        try {
+          if (jobEditionId !== null) {
+            await updateJob(job);
+          } else {
+            await addJob(job);
+          }
+          // Após adicionar/atualizar, busque os dados atualizados
+          const response = await api.get("/");
+          setJobs(response.data);
+          setIsDialogOpen(false);
+        } catch (error) {
+          console.error("Erro ao processar job:", error);
+        }
+      }
 
-	async function handleUpdateStatus(index: number, status: string) {
-		const job = jobs[index];
-		try {
-			await api.put(`/${job.id}`, { ...job, status });
-			const updatedJobs = jobs.map((j, i) =>
-				i === index ? { ...j, status } : j
-			);
-			setJobs(updatedJobs);
-		} catch (error) {
-			console.error("Erro ao atualizar status do job:", error);
-		}
-	}
+      async function handleUpdateStatus(id: number, status: string) {
+        try {
+          const job = jobs.find(job => job.id === id);
+          if (!job) return;
+      
+          await api.put(`/${id}`, { ...job, status });
+          const updatedJobs = jobs.map(job => 
+            job.id === id ? { ...job, status } : job
+          );
+          setJobs(updatedJobs);
+        } catch (error) {
+          console.error("Erro ao atualizar status do job:", error);
+        }
+      }
 
 	function handleEditJob(id: number) {
-		setJobEditionId(id);
-		setIsDialogOpen(true);
+		// Encontrar o job pelo id ao invés de usar o índice
+		const jobToEdit = jobs.find((job) => job.id === id);
+		if (jobToEdit) {
+			setJobEditionId(id);
+			setIsDialogOpen(true);
+		}
 	}
 
 	async function handleDeleteJob(id: number) {
@@ -89,9 +104,9 @@ export default function App() {
 			}
 		}
 		fetchJobs();
-	}, [jobs]);
+	}, []);
 
-	const editingJob = jobEditionId !== null ? jobs[jobEditionId] : null;
+	// const editingJob = jobEditionId !== null ? jobs[jobEditionId] : null;
 	return (
 		<div>
 			<header className="bg-blue-600 text-white text-center p-4">
@@ -130,7 +145,9 @@ export default function App() {
 					</DialogHeader>
 					<JobForm
 						onAdd={handleAddJob}
-						editingJob={editingJob}
+						editingJob={
+							jobs.find((job) => job.id === jobEditionId) || null
+						}
 					/>
 				</DialogContent>
 			</Dialog>

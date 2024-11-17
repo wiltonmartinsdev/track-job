@@ -18,9 +18,9 @@ import { Job } from "../JobForm";
 
 type JobListProps = {
 	jobs: Job[];
-	onUpdateStatus: (index: number, status: string) => void;
-	onEditJob: (index: number) => void;
-	onDeleteJob: (index: number) => void;
+	onUpdateStatus: (id: number, status: string) => void;
+	onEditJob: (id: number) => void;
+	onDeleteJob: (id: number) => void;
 };
 
 export default function JobList({
@@ -29,8 +29,17 @@ export default function JobList({
 	onEditJob,
 	onDeleteJob,
 }: JobListProps) {
+    function formatDate(dateString: string | undefined): string {
+        if (!dateString) {
+          return '-';
+        }
+        return new Date(dateString).toLocaleDateString('pt-BR');
+      }
+
 	return (
-		<Table id="jobList" className="scroll-mt-[35px]">
+		<Table
+			id="jobList"
+			className="scroll-mt-[35px]">
 			<TableHeader>
 				<TableRow>
 					<TableHead className="text-center">Id</TableHead>
@@ -66,13 +75,13 @@ export default function JobList({
 						<TableCell className="text-center">
 							{job.place}
 						</TableCell>
-						<TableCell>{job.created_at}</TableCell>
-						<TableCell>{job.updated_at}</TableCell>
+						<TableCell>{formatDate(job.created_at)}</TableCell>
+						<TableCell>{formatDate(job.updated_at)}</TableCell>
 						<TableCell>
 							<Select
 								value={job.status}
 								onValueChange={(value) =>
-									onUpdateStatus(index, value)
+									onUpdateStatus(job.id, value)
 								}>
 								<SelectTrigger tabIndex={0}>
 									{job.status}
