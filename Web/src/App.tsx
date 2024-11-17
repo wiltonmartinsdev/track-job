@@ -63,10 +63,23 @@ export default function App() {
           const job = jobs.find(job => job.id === id);
           if (!job) return;
       
-          await api.put(`/${id}`, { ...job, status });
+          const now = new Date().toISOString();
+      
+          // Remover a constante response não utilizada
+          await api.put(`/${id}`, { 
+            ...job, 
+            status,
+            updated_at: now 
+          });
+      
           const updatedJobs = jobs.map(job => 
-            job.id === id ? { ...job, status } : job
+            job.id === id ? { 
+              ...job, 
+              status, 
+              updated_at: now 
+            } : job
           );
+          
           setJobs(updatedJobs);
         } catch (error) {
           console.error("Erro ao atualizar status do job:", error);
