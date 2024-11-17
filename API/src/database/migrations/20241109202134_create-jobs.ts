@@ -10,12 +10,11 @@ export async function up(knex: Knex): Promise<void> {
 		table.text("work_regime").notNullable();
 		table.text("place").notNullable();
 		table.text("status").notNullable();
-		table.timestamp("created_at").defaultTo(knex.fn.now());
-		table.timestamp("updated_at").defaultTo(knex.fn.now());
-		table.integer("total_application").defaultTo(0);
+		table.timestamp("created_at").notNullable().defaultTo(knex.fn.now());
+		table.timestamp("updated_at").notNullable().defaultTo(knex.fn.now());
 	});
 }
 
 export async function down(knex: Knex): Promise<void> {
-    await knex.schema.dropTable("jobs");
+	await knex.schema.dropTable("jobs");
 }
