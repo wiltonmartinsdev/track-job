@@ -147,25 +147,25 @@ const brazilianStates = [
 	},
 ];
 export default function JobForm({ onAdd, editingJob }: JobFormProps) {
-	const {
-		register,
-		handleSubmit,
-		reset,
-		setValue,
-		watch,
-		clearErrors,
-		formState: { errors },
-	} = useForm<Job>({
-		defaultValues: {
-			company_name: "",
-			position: "Desenvolvedor Front-end",
-			seniority_level: "Júnior",
-			status: "Enviada",
-			vacancy_modality: "Remota",
-			work_regime: "CLT",
-			place: "",
-		},
-	});
+    const {
+        register,
+        handleSubmit,
+        reset,
+        setValue,
+        watch,
+        clearErrors,
+        formState: { errors },
+      } = useForm<Job>({
+        defaultValues: editingJob || {
+          company_name: "",
+          position: "Desenvolvedor Front-end",
+          seniority_level: "Júnior",
+          status: "Enviada",
+          vacancy_modality: "Remota",
+          work_regime: "CLT",
+          place: "",
+        },
+      });
 
 	const [open, setOpen] = useState(false);
 
@@ -175,12 +175,11 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 	const selectedWorkRegime = watch("work_regime");
 	const selectedPlace = watch("place");
 
-	const onSubmit: SubmitHandler<Job> = (data) => {
-		onAdd(data);
-		reset();
-
-		console.log("data =>", data);
-	};
+    const onSubmit: SubmitHandler<Job> = async (data) => {
+        await onAdd(data);
+        reset();
+        setOpen(false);
+      };
 
 	useEffect(() => {
 		if (editingJob) {
