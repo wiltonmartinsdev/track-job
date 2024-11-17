@@ -75,8 +75,8 @@ export default function JobList({
 						<TableCell className="text-center">
 							{job.place}
 						</TableCell>
-						<TableCell>{formatDate(job.created_at)}</TableCell>
-						<TableCell>{formatDate(job.updated_at)}</TableCell>
+						<TableCell className="text-center">{formatDate(job.created_at)}</TableCell>
+						<TableCell className="text-center">{formatDate(job.updated_at)}</TableCell>
 						<TableCell>
 							<Select
 								value={job.status}
