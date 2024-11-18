@@ -146,7 +146,7 @@ export default function JobList({
 
 							<Button
 								tabIndex={0}
-								onClick={() => onDeleteJob(index)}
+								onClick={() => onDeleteJob(job.id)}
 								className="hover:bg-red-600 focus-visible:ring-blue-400 focus-visible:ring-4">
 								<svg
 									className="hover-red"

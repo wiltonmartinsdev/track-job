@@ -11,16 +11,47 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+	useForm,
+	SubmitHandler,
+	FieldErrors,
+	Controller,
+} from "react-hook-form";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { toast } from "react-toastify";
+import { z } from "zod";
 
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Input } from "../ui/input";
+
+const jobFormSchema = z.object({
+	company_name: z.string().trim().min(4, {
+		message: "Ops! O nome da empresa deve ter no mínimo 4 caracteres.",
+	}),
+	position: z.string().min(1, {
+		message: "Ops! Por favor, selecione um cargo para continuar.",
+	}),
+	seniority_level: z.string().min(1, {
+		message: "Ops! Por favor, selecione um nível para continuar.",
+	}),
+	vacancy_modality: z.string().min(1, {
+		message: "Ops! Por favor, selecione uma modalidade para continuar.",
+	}),
+	work_regime: z.string().min(1, {
+		message:
+			"Ops! Por favor, selecione um regime de trabalho para continuar.",
+	}),
+	place: z.string().min(1, {
+		message: "Ops! Por favor, selecione um estado para continuar.",
+	}),
+	status: z.string().trim().min(7),
+});
 
 export type Job = {
 	id: number;
@@ -147,39 +178,42 @@ const brazilianStates = [
 	},
 ];
 export default function JobForm({ onAdd, editingJob }: JobFormProps) {
-    const {
-        register,
-        handleSubmit,
-        reset,
-        setValue,
-        watch,
-        clearErrors,
-        formState: { errors },
-      } = useForm<Job>({
-        defaultValues: editingJob || {
-          company_name: "",
-          position: "Desenvolvedor Front-end",
-          seniority_level: "Júnior",
-          status: "Enviada",
-          vacancy_modality: "Remota",
-          work_regime: "CLT",
-          place: "",
-        },
-      });
+	const { handleSubmit, reset, setValue, control } = useForm<Job>({
+		resolver: zodResolver(jobFormSchema),
+		defaultValues: editingJob || {
+			company_name: "",
+			position: "",
+			seniority_level: "",
+			status: "Enviada",
+			vacancy_modality: "",
+			work_regime: "",
+			place: "",
+		},
+	});
 
 	const [open, setOpen] = useState(false);
 
-	const selectedPosition = watch("position");
-	const selectedSeniorityLevel = watch("seniority_level");
-	const selectedVacancyModality = watch("vacancy_modality");
-	const selectedWorkRegime = watch("work_regime");
-	const selectedPlace = watch("place");
+	function showErrorAlerts(errors: FieldErrors<Job>) {
+		if (errors.company_name) {
+			return toast.warn(errors.company_name.message);
+		} else if (errors.position) {
+			return toast.warn(errors.position.message);
+		} else if (errors.seniority_level) {
+			return toast.warn(errors.seniority_level.message);
+		} else if (errors.vacancy_modality) {
+			return toast.warn(errors.vacancy_modality.message);
+		} else if (errors.work_regime) {
+			return toast.warn(errors.work_regime.message);
+		} else if (errors.place) {
+			return toast.warn(errors.place.message);
+		}
+	}
 
-    const onSubmit: SubmitHandler<Job> = async (data) => {
-        await onAdd(data);
-        reset();
-        setOpen(false);
-      };
+	const onSubmit: SubmitHandler<Job> = async (data) => {
+		await onAdd(data);
+		reset();
+		setOpen(false);
+	};
 
 	useEffect(() => {
 		if (editingJob) {
@@ -198,7 +232,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 	return (
 		<>
 			<form
-				onSubmit={handleSubmit(onSubmit)}
+				onSubmit={handleSubmit(onSubmit, showErrorAlerts)}
 				className="p-4 bg-gray-100 shadow-md rounded-md drop-shadow-xl">
 				{/* Field for choosing the company name */}
 				<div className="mb-4 flex flex-col gap-2">
@@ -207,17 +241,16 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
                 ">
 						Nome da empresa
 					</Label>
-					<Input
-						{...register("company_name", {
-							required: "O nome da empresa é obrigatório!",
-						})}
-						type="text"
+					<Controller
+						control={control}
+						name="company_name"
+						render={({ field }) => (
+							<Input
+								{...field}
+								type="text"
+							/>
+						)}
 					/>
-					{errors.company_name && (
-						<p className="text-red-500 text-sm">
-							{errors.company_name.message}
-						</p>
-					)}
 				</div>
 
 				{/* Field for choosing the position */}
@@ -227,43 +260,47 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
                 ">
 						Cargo
 					</Label>
-					<RadioGroup
-						className="flex"
-						value={selectedPosition}
-						onValueChange={(value) => setValue("position", value)}>
-						<div className="flex items-center space-x-2">
-							<RadioGroupItem
-								value="Desenvolvedor Front-end"
-								id="r1"
-								{...register("position", {
-									required: "Este campo é obrigatório",
-								})}
-							/>
-							<Label htmlFor="r1">Desenvolvedor Front-end</Label>
-						</div>
 
-						<div className="flex items-center space-x-2">
-							<RadioGroupItem
-								value="Desenvolvedor Back-end"
-								id="r2"
-								{...register("position", {
-									required: "Este campo é obrigatório",
-								})}
-							/>
-							<Label htmlFor="r2">Desenvolvedor Back-end</Label>
-						</div>
+					<Controller
+						control={control}
+						name="position"
+						render={({ field }) => (
+							<RadioGroup
+								className="flex"
+								value={field.value}
+								onValueChange={field.onChange}>
+								<div className="flex items-center space-x-2">
+									<RadioGroupItem
+										value="Desenvolvedor Front-end"
+										id="r1"
+									/>
+									<Label htmlFor="r1">
+										Desenvolvedor Front-end
+									</Label>
+								</div>
 
-						<div className="flex items-center space-x-2">
-							<RadioGroupItem
-								value="Desenvolvedor FullStack"
-								id="r3"
-								{...register("position", {
-									required: "Este campo é obrigatório",
-								})}
-							/>
-							<Label htmlFor="r3">Desenvolvedor FullStack</Label>
-						</div>
-					</RadioGroup>
+								<div className="flex items-center space-x-2">
+									<RadioGroupItem
+										value="Desenvolvedor Back-end"
+										id="r2"
+									/>
+									<Label htmlFor="r2">
+										Desenvolvedor Back-end
+									</Label>
+								</div>
+
+								<div className="flex items-center space-x-2">
+									<RadioGroupItem
+										value="Desenvolvedor FullStack"
+										id="r3"
+									/>
+									<Label htmlFor="r3">
+										Desenvolvedor FullStack
+									</Label>
+								</div>
+							</RadioGroup>
+						)}
+					/>
 				</div>
 
 				{/* Field for choosing seniority level */}
@@ -273,45 +310,40 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
                 ">
 						Nível de senioridade
 					</label>
-					<RadioGroup
-						className="flex"
-						value={selectedSeniorityLevel}
-						onValueChange={(value) =>
-							setValue("seniority_level", value)
-						}>
-						<div className="flex items-center space-x-2">
-							<RadioGroupItem
-								value="Júnior"
-								id="r4"
-								{...register("seniority_level", {
-									required: "Este campo é obrigatório",
-								})}
-							/>
-							<Label htmlFor="r4">Júnior</Label>
-						</div>
+					<Controller
+						control={control}
+						name="seniority_level"
+						render={({ field }) => (
+							<RadioGroup
+								className="flex"
+								value={field.value}
+								onValueChange={field.onChange}>
+								<div className="flex items-center space-x-2">
+									<RadioGroupItem
+										value="Júnior"
+										id="r4"
+									/>
+									<Label htmlFor="r4">Júnior</Label>
+								</div>
 
-						<div className="flex items-center space-x-2">
-							<RadioGroupItem
-								value="Pleno"
-								id="r5"
-								{...register("seniority_level", {
-									required: "Este campo é obrigatório",
-								})}
-							/>
-							<Label htmlFor="r5">Pleno</Label>
-						</div>
+								<div className="flex items-center space-x-2">
+									<RadioGroupItem
+										value="Pleno"
+										id="r5"
+									/>
+									<Label htmlFor="r5">Pleno</Label>
+								</div>
 
-						<div className="flex items-center space-x-2">
-							<RadioGroupItem
-								value="Sênior"
-								id="r6"
-								{...register("seniority_level", {
-									required: "Este campo é obrigatório",
-								})}
-							/>
-							<Label htmlFor="r6">Sênior</Label>
-						</div>
-					</RadioGroup>
+								<div className="flex items-center space-x-2">
+									<RadioGroupItem
+										value="Sênior"
+										id="r6"
+									/>
+									<Label htmlFor="r6">Sênior</Label>
+								</div>
+							</RadioGroup>
+						)}
+					/>
 				</div>
 
 				{/* Field for choosing the type of vacancy */}
@@ -321,45 +353,40 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
                 ">
 						Modalidade
 					</label>
-					<RadioGroup
-						className="flex"
-						value={selectedVacancyModality}
-						onValueChange={(value) =>
-							setValue("vacancy_modality", value)
-						}>
-						<div className="flex items-center space-x-2">
-							<RadioGroupItem
-								value="Remota"
-								id="r7"
-								{...register("vacancy_modality", {
-									required: "Este campo é obrigatório",
-								})}
-							/>
-							<Label htmlFor="r7">Remota</Label>
-						</div>
+					<Controller
+						control={control}
+						name="vacancy_modality"
+						render={({ field }) => (
+							<RadioGroup
+								className="flex"
+								value={field.value}
+								onValueChange={field.onChange}>
+								<div className="flex items-center space-x-2">
+									<RadioGroupItem
+										value="Remota"
+										id="r7"
+									/>
+									<Label htmlFor="r7">Remota</Label>
+								</div>
 
-						<div className="flex items-center space-x-2">
-							<RadioGroupItem
-								value="Híbrida"
-								id="r8"
-								{...register("vacancy_modality", {
-									required: "Este campo é obrigatório",
-								})}
-							/>
-							<Label htmlFor="r8">Híbrida</Label>
-						</div>
+								<div className="flex items-center space-x-2">
+									<RadioGroupItem
+										value="Híbrida"
+										id="r8"
+									/>
+									<Label htmlFor="r8">Híbrida</Label>
+								</div>
 
-						<div className="flex items-center space-x-2">
-							<RadioGroupItem
-								value="Presencial"
-								id="r9"
-								{...register("vacancy_modality", {
-									required: "Este campo é obrigatório",
-								})}
-							/>
-							<Label htmlFor="r9">Presencial</Label>
-						</div>
-					</RadioGroup>
+								<div className="flex items-center space-x-2">
+									<RadioGroupItem
+										value="Presencial"
+										id="r9"
+									/>
+									<Label htmlFor="r9">Presencial</Label>
+								</div>
+							</RadioGroup>
+						)}
+					/>
 				</div>
 
 				{/* Field for choosing the work regime */}
@@ -369,34 +396,32 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
                 ">
 						Regime de trabalho
 					</label>
-					<RadioGroup
-						className="flex"
-						value={selectedWorkRegime}
-						onValueChange={(value) =>
-							setValue("work_regime", value)
-						}>
-						<div className="flex items-center space-x-2">
-							<RadioGroupItem
-								value="CLT"
-								id="r10"
-								{...register("work_regime", {
-									required: "Este campo é obrigatório",
-								})}
-							/>
-							<Label htmlFor="r10">CLT</Label>
-						</div>
+					<Controller
+						control={control}
+						name="work_regime"
+						render={({ field }) => (
+							<RadioGroup
+								className="flex"
+								value={field.value}
+								onValueChange={field.onChange}>
+								<div className="flex items-center space-x-2">
+									<RadioGroupItem
+										value="CLT"
+										id="r10"
+									/>
+									<Label htmlFor="r10">CLT</Label>
+								</div>
 
-						<div className="flex items-center space-x-2">
-							<RadioGroupItem
-								value="PJ"
-								id="r11"
-								{...register("work_regime", {
-									required: "Este campo é obrigatório",
-								})}
-							/>
-							<Label htmlFor="r11">PJ</Label>
-						</div>
-					</RadioGroup>
+								<div className="flex items-center space-x-2">
+									<RadioGroupItem
+										value="PJ"
+										id="r11"
+									/>
+									<Label htmlFor="r11">PJ</Label>
+								</div>
+							</RadioGroup>
+						)}
+					/>
 				</div>
 
 				{/* Field for selection of Brazilian states */}
@@ -407,73 +432,70 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 						Localidade
 					</Label>
 
-					<Popover
-						open={open}
-						onOpenChange={setOpen}>
-						<PopoverTrigger asChild>
-							<Button
-								variant="outline"
-								role="combobox"
-								aria-expanded={open}
-								className="w-[200px] justify-between"
-								onClick={() => clearErrors("place")}
-								tabIndex={0}
-								{...register("place", {
-									required:
-										"A seleção de um estado é obrigatória!",
-								})}>
-								{selectedPlace
-									? brazilianStates.find(
-											(stateBr) =>
-												stateBr.value === selectedPlace
-									  )?.label
-									: "Selecione um estado"}
-								<ChevronsUpDown className="opacity-50" />
-							</Button>
-						</PopoverTrigger>
-						<PopoverContent className="w-[200px] p-0">
-							<Command>
-								<CommandInput placeholder="Procure pelo estado" />
-								<CommandList>
-									<CommandEmpty>
-										Nenhum estado encontrado!
-									</CommandEmpty>
-									<CommandGroup>
-										{brazilianStates.map((stateBr) => (
-											<CommandItem
-												key={stateBr.value}
-												value={stateBr.value}
-												tabIndex={0}
-												onSelect={(currentValue) => {
-													setValue(
-														"place",
-														currentValue
-													);
-													setOpen(false);
-													clearErrors("place");
-												}}>
-												{stateBr.label}
-												<Check
-													className={cn(
-														"ml-auto",
-														selectedPlace ===
-															stateBr.value
-															? "opacity-100"
-															: "opacity-0"
-													)}
-												/>
-											</CommandItem>
-										))}
-									</CommandGroup>
-								</CommandList>
-							</Command>
-						</PopoverContent>
-					</Popover>
-					{errors.place && (
-						<p className="text-red-500 text-sm">
-							{errors.place.message}
-						</p>
-					)}
+					<Controller
+						control={control}
+						name="place"
+						render={({ field }) => (
+							<Popover
+								open={open}
+								onOpenChange={setOpen}>
+								<PopoverTrigger asChild>
+									<Button
+										variant="outline"
+										role="combobox"
+										aria-expanded={open}
+										className="w-[200px] justify-between"
+										tabIndex={0}>
+										{field.value
+											? field.value
+											: "Selecione um estado"}
+										<ChevronsUpDown className="opacity-50" />
+									</Button>
+								</PopoverTrigger>
+								<PopoverContent className="w-[200px] p-0">
+									<Command>
+										<CommandInput placeholder="Procure pelo estado" />
+										<CommandList>
+											<CommandEmpty>
+												Nenhum estado encontrado!
+											</CommandEmpty>
+											<CommandGroup>
+												{brazilianStates.map(
+													(stateBr) => (
+														<CommandItem
+															key={stateBr.value}
+															value={
+																stateBr.value
+															}
+															tabIndex={0}
+															onSelect={(
+																currentValue
+															) => {
+																field.onChange(
+																	currentValue
+																);
+																setOpen(false);
+															}}>
+															{stateBr.label}
+															<Check
+																className={cn(
+																	"ml-auto",
+																	field.value ===
+																		stateBr.value
+																		? "opacity-100"
+																		: "opacity-0"
+																)}
+															/>
+														</CommandItem>
+													)
+												)}
+											</CommandGroup>
+										</CommandList>
+									</Command>
+								</PopoverContent>
+							</Popover>
+						)}
+					/>
 				</div>
 
 				<div className="flex justify-center">
