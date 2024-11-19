@@ -13,6 +13,17 @@ import {
 	SelectItem,
 	SelectTrigger,
 } from "@/components/ui/select";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { formatDistance } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -144,24 +155,63 @@ export default function JobList({
 								Editar
 							</Button>
 
-							<Button
-								tabIndex={0}
-								onClick={() => onDeleteJob(job.id)}
-								className="hover:bg-red-600 focus-visible:ring-blue-400 focus-visible:ring-4">
-								<svg
-									className="hover-red"
-									xmlns="http://www.w3.org/2000/svg"
-									width="26"
-									height="26"
-									viewBox="0 0 24 24">
-									<path
-										fill="#fff"
-										fill-rule="evenodd"
-										d="m6.774 6.4l.812 13.648a.8.8 0 0 0 .798.752h7.232a.8.8 0 0 0 .798-.752L17.226 6.4h1.203l-.817 13.719A2 2 0 0 1 15.616 22H8.384a2 2 0 0 1-1.996-1.881L5.571 6.4zM9.5 9h1.2l.5 9H10zm3.8 0h1.2l-.5 9h-1.2zM4.459 2.353l15.757 2.778a.5.5 0 0 1 .406.58L20.5 6.4L3.758 3.448l.122-.69a.5.5 0 0 1 .579-.405m6.29-1.125l3.94.695a.5.5 0 0 1 .406.58l-.122.689l-4.924-.869l.122-.689a.5.5 0 0 1 .579-.406z"
-									/>
-								</svg>{" "}
-								Apagar
-							</Button>
+							<AlertDialog>
+								<AlertDialogTrigger asChild>
+									<Button
+										tabIndex={0}
+										className="hover:bg-red-600 focus-visible:ring-blue-400 focus-visible:ring-4">
+										<svg
+											className="hover-red"
+											xmlns="http://www.w3.org/2000/svg"
+											width="26"
+											height="26"
+											viewBox="0 0 24 24">
+											<path
+												fill="#fff"
+												fill-rule="evenodd"
+												d="m6.774 6.4l.812 13.648a.8.8 0 0 0 .798.752h7.232a.8.8 0 0 0 .798-.752L17.226 6.4h1.203l-.817 13.719A2 2 0 0 1 15.616 22H8.384a2 2 0 0 1-1.996-1.881L5.571 6.4zM9.5 9h1.2l.5 9H10zm3.8 0h1.2l-.5 9h-1.2zM4.459 2.353l15.757 2.778a.5.5 0 0 1 .406.58L20.5 6.4L3.758 3.448l.122-.69a.5.5 0 0 1 .579-.405m6.29-1.125l3.94.695a.5.5 0 0 1 .406.58l-.122.689l-4.924-.869l.122-.689a.5.5 0 0 1 .579-.406z"
+											/>
+										</svg>
+										Excluir
+									</Button>
+								</AlertDialogTrigger>
+								<AlertDialogContent>
+									<AlertDialogHeader>
+										<AlertDialogTitle>
+											Você tem certeza que deseja excluir esta candidatura?
+										</AlertDialogTitle>
+										<AlertDialogDescription>
+											Atenção! Esta ação é irreversível.
+											Ao confirmar, sua candidatura será
+											permanentemente excluída, e todos os
+											dados associados a ela serão
+											removidos.
+										</AlertDialogDescription>
+									</AlertDialogHeader>
+									<AlertDialogFooter>
+										<AlertDialogCancel>
+											Cancelar
+										</AlertDialogCancel>
+										<AlertDialogAction
+											onClick={() => onDeleteJob(job.id)}
+											className="hover:bg-red-600 focus-visible:ring-blue-400 focus-visible:ring-4">
+											<svg
+												className="hover-red"
+												xmlns="http://www.w3.org/2000/svg"
+												width="26"
+												height="26"
+												viewBox="0 0 24 24">
+												<path
+													fill="#fff"
+													fill-rule="evenodd"
+													d="m6.774 6.4l.812 13.648a.8.8 0 0 0 .798.752h7.232a.8.8 0 0 0 .798-.752L17.226 6.4h1.203l-.817 13.719A2 2 0 0 1 15.616 22H8.384a2 2 0 0 1-1.996-1.881L5.571 6.4zM9.5 9h1.2l.5 9H10zm3.8 0h1.2l-.5 9h-1.2zM4.459 2.353l15.757 2.778a.5.5 0 0 1 .406.58L20.5 6.4L3.758 3.448l.122-.69a.5.5 0 0 1 .579-.405m6.29-1.125l3.94.695a.5.5 0 0 1 .406.58l-.122.689l-4.924-.869l.122-.689a.5.5 0 0 1 .579-.406z"
+												/>
+											</svg>
+											Excluir
+										</AlertDialogAction>
+									</AlertDialogFooter>
+								</AlertDialogContent>
+							</AlertDialog>
 						</TableCell>
 					</TableRow>
 				))}
