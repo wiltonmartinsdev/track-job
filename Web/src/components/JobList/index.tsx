@@ -34,7 +34,7 @@ type JobListProps = {
 	jobs: Job[];
 	onUpdateStatus: (id: number, status: string) => void;
 	onEditJob: (id: number) => void;
-	onDeleteJob: (id: number) => void;
+	onDeleteJob: (id: number, company_name: string) => void;
 };
 
 export default function JobList({
@@ -193,7 +193,7 @@ export default function JobList({
 											Cancelar
 										</AlertDialogCancel>
 										<AlertDialogAction
-											onClick={() => onDeleteJob(job.id)}
+											onClick={() => onDeleteJob(job.id, job.company_name)}
 											className="hover:bg-red-600 focus-visible:ring-blue-400 focus-visible:ring-4">
 											<svg
 												className="hover-red"
