@@ -20,7 +20,7 @@ export default function App() {
 		try {
 			console.log("Enviando job:", job);
 			const response = await api.post("", job);
-            console.log("Resposta da API:", response.data);
+			console.log("Resposta da API:", response.data);
 			setJobs([...jobs, response.data]);
 		} catch (error) {
 			console.error("Erro ao adicionar job:", error);
@@ -121,7 +121,7 @@ export default function App() {
 		fetchJobs();
 	}, []);
 
-	const editingJob = jobs.find((job) => job.id === jobEditionId) || null
+	const editingJob = jobs.find((job) => job.id === jobEditionId) || null;
 	return (
 		<div>
 			<header className="bg-blue-600 text-white text-center p-4">
@@ -156,13 +156,13 @@ export default function App() {
 				onOpenChange={setIsDialogOpen}>
 				<DialogContent>
 					<DialogHeader>
-						<DialogTitle>Editar Trabalho</DialogTitle>
+						<DialogTitle className="text-center">
+							Editar Candidatura
+						</DialogTitle>
 					</DialogHeader>
 					<JobForm
 						onAdd={handleAddJob}
-						editingJob={
-							editingJob
-						}
+						editingJob={editingJob}
 					/>
 				</DialogContent>
 			</Dialog>
