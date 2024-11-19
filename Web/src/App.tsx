@@ -5,6 +5,7 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
 import JobForm, { Job } from "./components/JobForm";
 import JobList from "./components/JobList";
@@ -18,9 +19,7 @@ export default function App() {
 
 	async function addJob(job: Job) {
 		try {
-			console.log("Enviando job:", job);
 			const response = await api.post("", job);
-			console.log("Resposta da API:", response.data);
 			setJobs([...jobs, response.data]);
 		} catch (error) {
 			console.error("Erro ao adicionar job:", error);
@@ -36,6 +35,7 @@ export default function App() {
 				);
 				setJobs(updatedJobs);
 				setJobEditionId(null);
+
 				return response.data;
 			} catch (error) {
 				console.error("Erro ao atualizar job:", error);
@@ -48,9 +48,14 @@ export default function App() {
 		try {
 			if (jobEditionId !== null) {
 				await updateJob(job);
+				toast.success(
+					`Suas alterações na empresa ${job.company_name} foram realizadas com sucesso!`
+				);
 			} else {
 				await addJob(job);
+				toast.success("Sua candidatura foi cadastrada com sucesso!");
 			}
+
 			// Após adicionar/atualizar, busque os dados atualizados
 			const response = await api.get("/");
 			setJobs(response.data);
@@ -84,6 +89,9 @@ export default function App() {
 			);
 
 			setJobs(updatedJobs);
+			toast.success(
+                `Suas alterações na empresa ${job.company_name} foram realizadas com sucesso!`
+            );
 		} catch (error) {
 			console.error("Erro ao atualizar status do job:", error);
 		}
@@ -97,11 +105,14 @@ export default function App() {
 		}
 	}
 
-	async function handleDeleteJob(id: number) {
+	async function handleDeleteJob(id: number, company_name: string) {
 		try {
 			await api.delete(`/${id}`);
 			const updatedJobs = jobs.filter((job) => job.id !== id);
 			setJobs(updatedJobs);
+			toast.success(
+				`A sua candidatura na empresa ${company_name} foi excluída com sucesso!`
+			);
 		} catch (error) {
 			console.error("Erro ao deletar job:", error);
 		}
