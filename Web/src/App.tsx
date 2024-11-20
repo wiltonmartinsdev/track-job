@@ -11,6 +11,7 @@ import JobForm, { Job } from "./components/JobForm";
 import JobList from "./components/JobList";
 import { ScrollIndicator } from "./components/ScrollIndicator";
 import { api } from "./services/api";
+import axios, { AxiosError } from "axios";
 
 export default function App() {
 	const [jobs, setJobs] = useState<Job[]>([]);
@@ -93,7 +94,20 @@ export default function App() {
                 `Suas alterações na empresa ${job.company_name} foram realizadas com sucesso!`
             );
 		} catch (error) {
-			console.error("Erro ao atualizar status do job:", error);
+			
+            if (axios.isAxiosError(error)) {
+                const serverError = error as AxiosError<{ message: string }>;
+                if (serverError.response && serverError.response.status === 400) {
+                  const errorMessage = serverError.response.data.message;
+                  toast.warning(errorMessage);
+                } else {
+                  console.error("Erro ao atualizar status do job:", error);
+                  toast.warning("Erro ao atualizar status do job");
+                }
+              } else {
+                console.error("Erro inesperado:", error);
+                toast.warning("Erro inesperado ao atualizar status do job");
+              }
 		}
 	}
 
@@ -137,7 +151,7 @@ export default function App() {
 		<div>
 			<header className="bg-blue-600 text-white text-center p-4">
 				<h1 className="font-roboto-flex font-black text-2xl">
-					Acompanhamento de Candidaturas
+                Track Job - Acompanhamento de Candidaturas
 				</h1>
 				<p className="font-roboto-flex font-black">
 					Total de candidaturas: {jobs.length}
