@@ -41,6 +41,20 @@ export default class JobController {
 				status,
 			} = bodySchema.parse(request.body);
 
+			// Check the number of jobs with status 'Emprego Atual'
+			if (status === "Emprego Atual") {
+				const countResult = await knex<jobRepository>("jobs")
+					.where({ status: "Emprego Atual" })
+					.count({ count: "*" });
+				const count = Number(countResult[0].count);
+				if (count >= 2) {
+					throw new AppError(
+						"Você só pode ter no máximo duas vagas com o status 'Emprego Atual'",
+						400
+					);
+				}
+			}
+
 			await knex<jobRepository>("jobs").insert({
 				company_name,
 				position,
@@ -98,6 +112,21 @@ export default class JobController {
 				throw new AppError("Job not found", 404);
 			}
 
+			// Check the number of jobs with status 'Emprego Atual', excluding the current job
+			if (status === "Emprego Atual") {
+				const countResult = await knex<jobRepository>("jobs")
+					.where({ status: "Emprego Atual" })
+					.andWhereNot({ id })
+					.count({ count: "*" });
+				const count = Number(countResult[0].count);
+				if (count >= 2) {
+					throw new AppError(
+						"Ops! Você só pode ter no máximo duas vagas com o status 'Emprego Atual'.",
+						400
+					);
+				}
+			}
+
 			await knex<jobRepository>("jobs")
 				.update({
 					company_name,
@@ -107,7 +136,7 @@ export default class JobController {
 					work_regime,
 					place,
 					status,
-					updated_at: knex.raw("datetime('now', '-3 hours')"), // Modificação aqui
+					updated_at: knex.raw("datetime('now', '-3 hours')"),
 				})
 				.where({ id });
 
