@@ -127,11 +127,14 @@ export default function JobList({
 										<SelectItem value="Em seleção">
 											Em seleção
 										</SelectItem>
-										<SelectItem value="Contratado">
-											Contratado
-										</SelectItem>
 										<SelectItem value="Não Contratado">
 											Não Contratado
+										</SelectItem>
+										<SelectItem value="Emprego Atual">
+											Emprego Atual
+										</SelectItem>
+										<SelectItem value="Desligado">
+											Desligado
 										</SelectItem>
 									</SelectGroup>
 								</SelectContent>
@@ -178,7 +181,8 @@ export default function JobList({
 								<AlertDialogContent>
 									<AlertDialogHeader>
 										<AlertDialogTitle>
-											Você tem certeza que deseja excluir esta candidatura?
+											Você tem certeza que deseja excluir
+											esta candidatura?
 										</AlertDialogTitle>
 										<AlertDialogDescription>
 											Atenção! Esta ação é irreversível.
@@ -193,7 +197,12 @@ export default function JobList({
 											Cancelar
 										</AlertDialogCancel>
 										<AlertDialogAction
-											onClick={() => onDeleteJob(job.id, job.company_name)}
+											onClick={() =>
+												onDeleteJob(
+													job.id,
+													job.company_name
+												)
+											}
 											className="hover:bg-red-600 focus-visible:ring-blue-400 focus-visible:ring-4">
 											<svg
 												className="hover-red"
