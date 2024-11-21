@@ -27,6 +27,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import DollarIcon from "@/assets/dollarIcon.svg";
+import EuroIcon from "@/assets/euroIcon.svg";
+import RealIcon from "@/assets/realIcon.svg";
 
 import { Input } from "../ui/input";
 
@@ -34,20 +37,25 @@ const jobFormSchema = z.object({
 	company_name: z.string().trim().min(4, {
 		message: "Ops! O nome da empresa deve ter no mínimo 4 caracteres.",
 	}),
-	position: z.string().min(1, {
+	position: z.string().min(8, {
 		message: "Ops! Por favor, selecione um cargo para continuar.",
 	}),
-	seniority_level: z.string().min(1, {
+	seniority_level: z.string().min(5, {
 		message: "Ops! Por favor, selecione um nível para continuar.",
 	}),
-	vacancy_modality: z.string().min(1, {
+	payment_currency: z.string().min(4, {
+		message: "Ops! Por favor, selecione uma moeda para continuar.",
+	}),
+	initial_salary: z.number().nonnegative(),
+	current_salary: z.number().nonnegative(),
+	vacancy_modality: z.string().min(6, {
 		message: "Ops! Por favor, selecione uma modalidade para continuar.",
 	}),
-	work_regime: z.string().min(1, {
+	work_regime: z.string().min(2, {
 		message:
 			"Ops! Por favor, selecione um regime de trabalho para continuar.",
 	}),
-	place: z.string().min(1, {
+	place: z.string().min(4, {
 		message: "Ops! Por favor, selecione um estado para continuar.",
 	}),
 	status: z.string().trim().min(7),
@@ -58,12 +66,15 @@ export type Job = {
 	company_name: string;
 	position: string;
 	seniority_level: string;
-	status: string;
+	payment_currency: string;
+	initial_salary: number;
+	current_salary: number;
 	vacancy_modality: string;
 	work_regime: string;
 	place: string;
-	created_at?: string;
-	updated_at?: string;
+	status: string;
+	created_at: string;
+	updated_at: string;
 };
 
 type JobFormProps = {
@@ -184,6 +195,9 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 			company_name: "",
 			position: "",
 			seniority_level: "",
+			payment_currency: "",
+			initial_salary: 0,
+			current_salary: 0,
 			status: "Enviada",
 			vacancy_modality: "",
 			work_regime: "",
@@ -222,10 +236,16 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 			setValue("company_name", editingJob.company_name);
 			setValue("position", editingJob.position);
 			setValue("seniority_level", editingJob.seniority_level);
+			setValue("initial_salary", Number(editingJob.initial_salary));
+			setValue("current_salary", Number(editingJob.current_salary));
 			setValue("status", editingJob.status);
 			setValue("vacancy_modality", editingJob.vacancy_modality);
 			setValue("work_regime", editingJob.work_regime);
 			setValue("place", editingJob.place);
+
+            Object.entries(editingJob).forEach(([key, value]) => {
+                setValue(key as keyof Job, value);
+              });
 		}
 	}, [editingJob, setValue]);
 
@@ -271,7 +291,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 								onValueChange={field.onChange}>
 								<div className="flex items-center space-x-2">
 									<RadioGroupItem
-										value="Desenvolvedor Front-end"
+										value="Front-end"
 										id="r1"
 									/>
 									<Label htmlFor="r1">
@@ -281,7 +301,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 
 								<div className="flex items-center space-x-2">
 									<RadioGroupItem
-										value="Desenvolvedor Back-end"
+										value="Back-end"
 										id="r2"
 									/>
 									<Label htmlFor="r2">
@@ -291,7 +311,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 
 								<div className="flex items-center space-x-2">
 									<RadioGroupItem
-										value="Desenvolvedor FullStack"
+										value="FullStack"
 										id="r3"
 									/>
 									<Label htmlFor="r3">
@@ -345,6 +365,111 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 						)}
 					/>
 				</div>
+
+				{/* Field to choose payment currency */}
+				<div className="mb-8 flex flex-col gap-2">
+					<Label className="font-roboto-flex font-black text-lg">
+						Moeda de pagamento
+					</Label>
+					<Controller
+						control={control}
+						name="payment_currency"
+						render={({ field }) => (
+							<RadioGroup
+								className="flex"
+								value={field.value}
+								onValueChange={field.onChange}>
+								<div className="flex items-center space-x-2">
+									<RadioGroupItem
+										value="Real"
+										id="r12"
+									/>
+									<Label
+										htmlFor="r12"
+										className="flex gap-1 items-center">
+										<img
+											src={RealIcon}
+											alt=""
+										/>
+										Real
+									</Label>
+								</div>
+
+								<div className="flex items-center space-x-2">
+									<RadioGroupItem
+										value="Dólar"
+										id="r13"
+									/>
+									<Label
+										htmlFor="r13"
+										className="flex items-center">
+										<img
+											src={DollarIcon}
+											alt=""
+										/>
+										Dólar
+									</Label>
+								</div>
+
+								<div className="flex items-center space-x-2">
+									<RadioGroupItem
+										value="Euro"
+										id="r14"
+									/>
+									<Label
+										htmlFor="r14"
+										className="flex gap-[2px] items-center">
+										<img
+											src={EuroIcon}
+											alt=""
+										/>
+										Euro
+									</Label>
+								</div>
+							</RadioGroup>
+						)}
+					/>
+				</div>
+
+				{editingJob && (
+					<>
+						{/* Campo para Salário Inicial */}
+						<div className="mb-4 flex flex-col gap-2">
+							<Label className="font-roboto-flex font-black text-lg">
+								Salário Inicial
+							</Label>
+							<Controller
+								control={control}
+								name="initial_salary"
+								render={({ field }) => (
+									<Input
+										{...field}
+										type="number"
+										min="0"
+									/>
+								)}
+							/>
+						</div>
+
+						{/* Campo para Salário Atual */}
+						<div className="mb-4 flex flex-col gap-2">
+							<Label className="font-roboto-flex font-black text-lg">
+								Salário Atual
+							</Label>
+							<Controller
+								control={control}
+								name="current_salary"
+								render={({ field }) => (
+									<Input
+										{...field}
+										type="number"
+										min="0"
+									/>
+								)}
+							/>
+						</div>
+					</>
+				)}
 
 				{/* Field for choosing the type of vacancy */}
 				<div className="mb-8 flex flex-col gap-2">

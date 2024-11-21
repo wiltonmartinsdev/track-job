@@ -75,6 +75,8 @@ export default function JobList({
 					<TableHead className="text-center">Empresa</TableHead>
 					<TableHead className="text-center">Cargo</TableHead>
 					<TableHead>Nível</TableHead>
+					<TableHead>Salário inicial</TableHead>
+					<TableHead>Salário atual</TableHead>
 					<TableHead>Modalidade</TableHead>
 					<TableHead>Regime</TableHead>
 					<TableHead className="text-center">Localidade</TableHead>
@@ -91,9 +93,15 @@ export default function JobList({
 						<TableCell className="text-center">
 							{job.company_name}
 						</TableCell>
-						<TableCell>{job.position}</TableCell>
+						<TableCell className="text-center">{job.position}</TableCell>
 						<TableCell className="text-center">
 							{job.seniority_level}
+						</TableCell>
+						<TableCell className="text-center">
+							{job.initial_salary}
+						</TableCell>
+						<TableCell className="text-center">
+							{job.current_salary}
 						</TableCell>
 						<TableCell className="text-center">
 							{job.vacancy_modality}
