@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import z from "zod";
+import { jobRepository } from "../database/types/job-repository";
 
 import { knex } from "../database/knex";
 import AppError from "../utils/AppError";
@@ -21,20 +22,26 @@ export default class JobController {
 
 	async create(request: Request, response: Response, next: NextFunction) {
 		try {
-			const bodySchema = z.object({
-				company_name: z.string().trim().min(4),
-				position: z.string().trim().min(13),
-				seniority_level: z.string().trim().min(5),
-				vacancy_modality: z.string().trim().min(6),
-				work_regime: z.string().trim().min(2),
-				place: z.string().trim().min(4),
-				status: z.string().trim().min(7),
-			});
+            const bodySchema = z.object({
+                company_name: z.string().trim().min(4),
+                position: z.string().trim().min(8),
+                seniority_level: z.string().trim().min(5),
+                payment_currency: z.string().trim().min(4),
+                initial_salary: z.number().nonnegative(),
+                current_salary: z.number().nonnegative(),
+                vacancy_modality: z.string().trim().min(6),
+                work_regime: z.string().trim().min(2),
+                place: z.string().trim().min(4),
+                status: z.string().trim().min(7),
+              });
 
 			const {
 				company_name,
 				position,
 				seniority_level,
+                payment_currency,
+                initial_salary,
+                current_salary,
 				vacancy_modality,
 				work_regime,
 				place,
@@ -59,6 +66,9 @@ export default class JobController {
 				company_name,
 				position,
 				seniority_level,
+                payment_currency,
+                initial_salary,
+                current_salary,
 				vacancy_modality,
 				work_regime,
 				place,
@@ -87,19 +97,25 @@ export default class JobController {
 				company_name,
 				position,
 				seniority_level,
+                payment_currency,
+                initial_salary,
+                current_salary,
 				vacancy_modality,
 				work_regime,
 				place,
 				status,
 			} = z
 				.object({
-					company_name: z.string().trim().min(4),
-					position: z.string().trim().min(13),
-					seniority_level: z.string().trim().min(5),
-					vacancy_modality: z.string().trim().min(6),
-					work_regime: z.string().trim().min(2),
-					place: z.string().trim().min(4),
-					status: z.string().trim().min(7),
+                    company_name: z.string().trim().min(4),
+                    position: z.string().trim().min(13),
+                    seniority_level: z.string().trim().min(5),
+                    payment_currency: z.string().trim().min(4),
+                    initial_salary: z.number().nonnegative(),
+                    current_salary: z.number().nonnegative(),
+                    vacancy_modality: z.string().trim().min(6),
+                    work_regime: z.string().trim().min(2),
+                    place: z.string().trim().min(4),
+                    status: z.string().trim().min(7),
 				})
 				.parse(request.body);
 
@@ -132,6 +148,9 @@ export default class JobController {
 					company_name,
 					position,
 					seniority_level,
+                    payment_currency,
+                    initial_salary,
+                    current_salary,
 					vacancy_modality,
 					work_regime,
 					place,
