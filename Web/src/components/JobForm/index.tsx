@@ -394,7 +394,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 								className="flex"
 								value={field.value}
 								onValueChange={field.onChange}>
-								<div className="flex items-center space-x-1">
+								<div className="flex items-center space-x-1 gap-1">
 									<RadioGroupItem
 										value="Real"
 										id="r12"
@@ -406,7 +406,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 									</Label>
 								</div>
 
-								<div className="flex items-center space-x-1">
+								<div className="flex items-center space-x-1 gap-1 ">
 									<RadioGroupItem
 										value="Dólar"
 										id="r13"
@@ -418,7 +418,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 									</Label>
 								</div>
 
-								<div className="flex items-center space-x-1">
+								<div className="flex items-center space-x-1 gap-1">
 									<RadioGroupItem
 										value="Euro"
 										id="r14"
