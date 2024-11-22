@@ -13,6 +13,8 @@ import {
 	SelectItem,
 	SelectTrigger,
 } from "@/components/ui/select";
+
+import {getCurrencySymbol} from "../../utils/currencyUtils"
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -26,6 +28,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { formatDistance } from "date-fns";
 import { ptBR } from "date-fns/locale";
+
+// import DollarIcon from "@/assets/dollarIcon.svg";
+// import EuroIcon from "@/assets/euroIcon.svg";
+// import RealIcon from "@/assets/realIcon.svg";
 
 import { Button } from "../ui/button";
 import { Job } from "../JobForm";
@@ -93,15 +99,23 @@ export default function JobList({
 						<TableCell className="text-center">
 							{job.company_name}
 						</TableCell>
-						<TableCell className="text-center">{job.position}</TableCell>
+						<TableCell className="text-center">
+							{job.position}
+						</TableCell>
 						<TableCell className="text-center">
 							{job.seniority_level}
 						</TableCell>
 						<TableCell className="text-center">
-							{job.initial_salary}
+							<div className="flex gap-1">
+                            <span>{getCurrencySymbol(job.payment_currency)}</span>
+								{job.initial_salary}
+							</div>
 						</TableCell>
 						<TableCell className="text-center">
-							{job.current_salary}
+							<div className="flex gap-1">
+                            <span>{getCurrencySymbol(job.payment_currency)}</span>
+								{job.current_salary}
+							</div>
 						</TableCell>
 						<TableCell className="text-center">
 							{job.vacancy_modality}
