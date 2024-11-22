@@ -22,17 +22,14 @@ import { Check, ChevronsUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { z } from "zod";
-import { getCurrencySymbol } from "../../utils/currencyUtils";
 
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import DollarIcon from "@/assets/dollarIcon.svg";
-import EuroIcon from "@/assets/euroIcon.svg";
-import RealIcon from "@/assets/realIcon.svg";
 
+import { getCurrencySymbol } from "../../utils/currencyUtils";
 import { Input } from "../ui/input";
 
 const jobFormSchema = z.object({
@@ -211,10 +208,10 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 
 	const [open, setOpen] = useState(false);
 
-    const selectedCurrency = useWatch({
-        control,
-        name: "payment_currency",
-    });
+	const selectedCurrency = useWatch({
+		control,
+		name: "payment_currency",
+	});
 
 	function showErrorAlerts(errors: FieldErrors<Job>) {
 		if (errors.company_name) {
@@ -397,7 +394,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 								className="flex"
 								value={field.value}
 								onValueChange={field.onChange}>
-								<div className="flex items-center space-x-2">
+								<div className="flex items-center space-x-1">
 									<RadioGroupItem
 										value="Real"
 										id="r12"
@@ -405,11 +402,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 									<Label
 										htmlFor="r12"
 										className="flex gap-1 items-center">
-										<img
-											src={RealIcon}
-											alt=""
-										/>
-										Real
+										R$ Real
 									</Label>
 								</div>
 
@@ -421,11 +414,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 									<Label
 										htmlFor="r13"
 										className="flex items-center">
-										<img
-											src={DollarIcon}
-											alt=""
-										/>
-										Dólar
+										$ Dólar
 									</Label>
 								</div>
 
@@ -437,11 +426,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 									<Label
 										htmlFor="r14"
 										className="flex gap-[2px] items-center">
-										<img
-											src={EuroIcon}
-											alt=""
-										/>
-										Euro
+										€ Euro
 									</Label>
 								</div>
 							</RadioGroup>
@@ -460,16 +445,24 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 								control={control}
 								name="initial_salary"
 								render={({ field }) => (
-                                    <div className="flex items-center gap-2">
-                                    <span>{getCurrencySymbol(selectedCurrency)}</span>
-                                    <Input
-                                        {...field}
-                                        type="number"
-                                        min="0"
-                                        onChange={(e) => field.onChange(Number(e.target.value))}
-                                        value={field.value || ""}
-                                    />
-                                </div>
+									<div className="flex items-center gap-2">
+										<span>
+											{getCurrencySymbol(
+												selectedCurrency
+											)}
+										</span>
+										<Input
+											{...field}
+											type="number"
+											min="0"
+											onChange={(e) =>
+												field.onChange(
+													Number(e.target.value)
+												)
+											}
+											value={field.value || ""}
+										/>
+									</div>
 								)}
 							/>
 						</div>
@@ -483,16 +476,24 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 								control={control}
 								name="current_salary"
 								render={({ field }) => (
-                                    <div className="flex items-center gap-2">
-                                    <span>{getCurrencySymbol(selectedCurrency)}</span>
-                                    <Input
-                                        {...field}
-                                        type="number"
-                                        min="0"
-                                        onChange={(e) => field.onChange(Number(e.target.value))}
-                                        value={field.value || ""}
-                                    />
-                                </div>
+									<div className="flex items-center gap-2">
+										<span>
+											{getCurrencySymbol(
+												selectedCurrency
+											)}
+										</span>
+										<Input
+											{...field}
+											type="number"
+											min="0"
+											onChange={(e) =>
+												field.onChange(
+													Number(e.target.value)
+												)
+											}
+											value={field.value || ""}
+										/>
+									</div>
 								)}
 							/>
 						</div>
