@@ -107,7 +107,7 @@ export default class JobController {
 			} = z
 				.object({
                     company_name: z.string().trim().min(4),
-                    position: z.string().trim().min(13),
+                    position: z.string().trim().min(8),
                     seniority_level: z.string().trim().min(5),
                     payment_currency: z.string().trim().min(4),
                     initial_salary: z.number().nonnegative(),
