@@ -28,23 +28,22 @@ export default function App() {
 		}
 	}
 
-	async function updateJob(job: Job) {
-		if (jobEditionId !== null) {
-			try {
-				const response = await api.put(`/${jobEditionId}`, job);
-				const updatedJobs = jobs.map((j) =>
-					j.id === jobEditionId ? response.data : j
-				);
-				setJobs(updatedJobs);
-				setJobEditionId(null);
-
-				return response.data;
-			} catch (error) {
-				console.error("Erro ao atualizar job:", error);
-				throw error;
-			}
-		}
-	}
+    async function updateJob(job: Job) {
+        if (jobEditionId !== null) {
+          try {
+            const response = await api.put(`/${jobEditionId}`, job);
+            const updatedJobs = jobs.map((j) =>
+              j.id === jobEditionId ? response.data : j
+            );
+            setJobs(updatedJobs);
+            setJobEditionId(null);
+            return response.data;
+          } catch (error) {
+            console.error("Erro ao atualizar job:", error);
+            throw error;
+          }
+        }
+      }
 
 	async function handleAddJob(job: Job) {
 		try {

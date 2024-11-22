@@ -34,6 +34,7 @@ import RealIcon from "@/assets/realIcon.svg";
 import { Input } from "../ui/input";
 
 const jobFormSchema = z.object({
+	id: z.number().optional(),
 	company_name: z.string().trim().min(4, {
 		message: "Ops! O nome da empresa deve ter no mínimo 4 caracteres.",
 	}),
@@ -46,8 +47,8 @@ const jobFormSchema = z.object({
 	payment_currency: z.string().min(4, {
 		message: "Ops! Por favor, selecione uma moeda para continuar.",
 	}),
-	initial_salary: z.number().nonnegative(),
-	current_salary: z.number().nonnegative(),
+	initial_salary: z.number().nonnegative().optional(),
+	current_salary: z.number().nonnegative().optional(),
 	vacancy_modality: z.string().min(6, {
 		message: "Ops! Por favor, selecione uma modalidade para continuar.",
 	}),
@@ -192,6 +193,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 	const { handleSubmit, reset, setValue, control } = useForm<Job>({
 		resolver: zodResolver(jobFormSchema),
 		defaultValues: editingJob || {
+			id: undefined,
 			company_name: "",
 			position: "",
 			seniority_level: "",
@@ -224,7 +226,16 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 	}
 
 	const onSubmit: SubmitHandler<Job> = async (data) => {
-		await onAdd(data);
+		console.log("Dados antes do envio:", {
+			...data,
+			initial_salary: Number(data.initial_salary),
+			current_salary: Number(data.current_salary),
+		});
+		await onAdd({
+			...data,
+			initial_salary: Number(data.initial_salary),
+			current_salary: Number(data.current_salary),
+		});
 		reset();
 		setOpen(false);
 	};
@@ -232,7 +243,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 	useEffect(() => {
 		if (editingJob) {
 			console.log("editingJob =>", editingJob);
-
+			setValue("id", editingJob.id);
 			setValue("company_name", editingJob.company_name);
 			setValue("position", editingJob.position);
 			setValue("seniority_level", editingJob.seniority_level);
@@ -243,9 +254,9 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 			setValue("work_regime", editingJob.work_regime);
 			setValue("place", editingJob.place);
 
-            Object.entries(editingJob).forEach(([key, value]) => {
-                setValue(key as keyof Job, value);
-              });
+			Object.entries(editingJob).forEach(([key, value]) => {
+				setValue(key as keyof Job, value);
+			});
 		}
 	}, [editingJob, setValue]);
 
@@ -446,6 +457,12 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 										{...field}
 										type="number"
 										min="0"
+										onChange={(e) =>
+											field.onChange(
+												Number(e.target.value)
+											)
+										}
+										value={field.value || ""}
 									/>
 								)}
 							/>
@@ -464,6 +481,12 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 										{...field}
 										type="number"
 										min="0"
+										onChange={(e) =>
+											field.onChange(
+												Number(e.target.value)
+											)
+										}
+										value={field.value || ""}
 									/>
 								)}
 							/>
