@@ -1,13 +1,13 @@
 import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { formatDistance } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -54,38 +54,10 @@ export default function JobList({
 				<div
 					key={job.id}
 					className="p-4 bg-white shadow-md rounded-md">
-					<div className="flex justify-between items-center">
+					<div className="flex justify-center items-center">
 						<h2 className="text-lg font-bold">
 							{job.company_name}
 						</h2>
-						{/* <Select
-							value={job.status}
-							onValueChange={(value) =>
-								onUpdateStatus(job.id, value)
-							}>
-							<SelectTrigger tabIndex={0}>
-								{job.status}
-							</SelectTrigger>
-							<SelectContent>
-								<SelectGroup>
-									<SelectItem value="Enviada">
-										Enviada
-									</SelectItem>
-									<SelectItem value="Em seleção">
-										Em seleção
-									</SelectItem>
-									<SelectItem value="Não Contratado">
-										Não Contratado
-									</SelectItem>
-									<SelectItem value="Emprego Atual">
-										Emprego Atual
-									</SelectItem>
-									<SelectItem value="Desligado">
-										Desligado
-									</SelectItem>
-								</SelectGroup>
-							</SelectContent>
-						</Select> */}
 					</div>
 					<p className="text-sm text-gray-600">
 						<span className="text-black font-black">Cargo:</span>{" "}
@@ -128,9 +100,10 @@ export default function JobList({
 						</span>{" "}
 						{job.place}
 					</p>
-                    <p className="text-sm text-gray-600">
-                        <span className="text-black font-black">Status:</span> {job.status}
-                    </p>
+					<p className="text-sm text-gray-600">
+						<span className="text-black font-black">Status:</span>{" "}
+						{job.status}
+					</p>
 					<p className="text-sm text-gray-600">
 						<span className="text-black font-black">
 							Criada em:
@@ -143,7 +116,7 @@ export default function JobList({
 						</span>{" "}
 						{formatRelativeDate(job.updated_at)}
 					</p>
-					<div className="flex gap-2 mt-2">
+					<div className="flex gap-2 mt-2 justify-center">
 						<Button
 							tabIndex={0}
 							onClick={() => onEditJob(job.id)}
