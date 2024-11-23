@@ -1,38 +1,18 @@
 import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "@/components/ui/table";
-import {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectTrigger,
-} from "@/components/ui/select";
-
-import {getCurrencySymbol} from "../../utils/currencyUtils"
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-	AlertDialogTrigger,
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { formatDistance } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-// import DollarIcon from "@/assets/dollarIcon.svg";
-// import EuroIcon from "@/assets/euroIcon.svg";
-// import RealIcon from "@/assets/realIcon.svg";
-
+import { getCurrencySymbol } from "../../utils/currencyUtils";
 import { Button } from "../ui/button";
 import { Job } from "../JobForm";
 
@@ -45,11 +25,9 @@ type JobListProps = {
 
 export default function JobList({
 	jobs,
-	onUpdateStatus,
 	onEditJob,
 	onDeleteJob,
 }: JobListProps) {
-	// Formata data normal
 	function formatDate(dateString: string | undefined): string {
 		if (!dateString) {
 			return "-";
@@ -57,193 +35,162 @@ export default function JobList({
 		return new Date(dateString).toLocaleDateString("pt-BR");
 	}
 
-	// Formata data relativa
-    function formatRelativeDate(dateString: string | undefined): string {
-        if (!dateString) {
-            return "-";
-        }
-        const relativeDate = formatDistance(new Date(dateString), new Date(), {
-            locale: ptBR,
-        });
-        return `Há ${relativeDate.replace("menos de um minuto", "menos de 1 min")}`;
-    }
+	function formatRelativeDate(dateString: string | undefined): string {
+		if (!dateString) {
+			return "-";
+		}
+		const relativeDate = formatDistance(new Date(dateString), new Date(), {
+			locale: ptBR,
+		});
+		return `Há ${relativeDate.replace(
+			"menos de um minuto",
+			"menos de 1 min"
+		)}`;
+	}
 
 	return (
-		<Table
-			id="jobList"
-			className="scroll-mt-[18px]">
-			<TableHeader>
-				<TableRow>
-					<TableHead className="text-center">Id</TableHead>
-					<TableHead className="text-center">Empresa</TableHead>
-					<TableHead className="text-center">Cargo</TableHead>
-					<TableHead>Nível</TableHead>
-					<TableHead>Salário inicial</TableHead>
-					<TableHead>Salário atual</TableHead>
-					<TableHead>Modalidade</TableHead>
-					<TableHead>Regime</TableHead>
-					<TableHead className="text-center">Localidade</TableHead>
-					<TableHead className="text-center">Data</TableHead>
-					<TableHead className="text-center">Atualização</TableHead>
-					<TableHead className="text-center">Status</TableHead>
-					<TableHead className="text-center">Ações</TableHead>
-				</TableRow>
-			</TableHeader>
-			<TableBody>
-				{jobs.map((job, index) => (
-					<TableRow key={index}>
-						<TableCell className="text-center">{job.id}</TableCell>
-						<TableCell className="text-center">
+		<div className="flex flex-col gap-4">
+			{jobs.map((job) => (
+				<div
+					key={job.id}
+					className="p-4 bg-white shadow-md rounded-md">
+					<div className="flex justify-between items-center">
+						<h2 className="text-lg font-bold">
 							{job.company_name}
-						</TableCell>
-						<TableCell className="text-center">
-							{job.position}
-						</TableCell>
-						<TableCell className="text-center">
-							{job.seniority_level}
-						</TableCell>
-						<TableCell className="text-center">
-							<div className="flex gap-1">
-                            <span>{getCurrencySymbol(job.payment_currency)}</span>
-								{job.initial_salary}
-							</div>
-						</TableCell>
-						<TableCell className="text-center">
-							<div className="flex gap-1">
-                            <span>{getCurrencySymbol(job.payment_currency)}</span>
-								{job.current_salary}
-							</div>
-						</TableCell>
-						<TableCell className="text-center">
-							{job.vacancy_modality}
-						</TableCell>
-						<TableCell className="text-center">
-							{job.work_regime}
-						</TableCell>
-						<TableCell className="text-center">
-							{job.place}
-						</TableCell>
-						<TableCell className="text-center">
-							{formatDate(job.created_at)}
-						</TableCell>
-						<TableCell className="text-center">
-							{formatRelativeDate(job.updated_at)}
-						</TableCell>
-						<TableCell>
-							<Select
-								value={job.status}
-								onValueChange={(value) =>
-									onUpdateStatus(job.id, value)
-								}>
-								<SelectTrigger tabIndex={0}>
-									{job.status}
-								</SelectTrigger>
-								<SelectContent>
-									<SelectGroup>
-										<SelectItem value="Enviada">
-											Enviada
-										</SelectItem>
-										<SelectItem value="Em seleção">
-											Em seleção
-										</SelectItem>
-										<SelectItem value="Não Contratado">
-											Não Contratado
-										</SelectItem>
-										<SelectItem value="Emprego Atual">
-											Emprego Atual
-										</SelectItem>
-										<SelectItem value="Desligado">
-											Desligado
-										</SelectItem>
-									</SelectGroup>
-								</SelectContent>
-							</Select>
-						</TableCell>
-						<TableCell className="flex flex-col gap-2 cursor-pointer">
-							<Button
-								tabIndex={0}
-								onClick={() => onEditJob(job.id)}
-								className="hover:bg-yellow-500 focus-visible:ring-blue-400 focus-visible:ring-4">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="26"
-									height="26"
-									viewBox="0 0 20 20">
-									<path
-										fill="#fff"
-										d="M5.5 7a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm0 2.5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1zm-.5 3a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5M4.5 4A2.5 2.5 0 0 0 2 6.5v7A2.5 2.5 0 0 0 4.5 16h4.975c.11-.361.283-.7.51-1H4.5A1.5 1.5 0 0 1 3 13.5v-7A1.5 1.5 0 0 1 4.5 5h11A1.5 1.5 0 0 1 17 6.5v2.503a2.9 2.9 0 0 1 1 .13V6.5A2.5 2.5 0 0 0 15.5 4zm6.48 11.377l4.83-4.83a1.87 1.87 0 1 1 2.644 2.646l-4.83 4.829a2.2 2.2 0 0 1-1.02.578l-1.498.374a.89.89 0 0 1-1.079-1.078l.375-1.498a2.2 2.2 0 0 1 .578-1.02"
-									/>
-								</svg>
-								Editar
-							</Button>
-
-							<AlertDialog>
-								<AlertDialogTrigger asChild>
-									<Button
-										tabIndex={0}
+						</h2>
+						{/* <Select
+							value={job.status}
+							onValueChange={(value) =>
+								onUpdateStatus(job.id, value)
+							}>
+							<SelectTrigger tabIndex={0}>
+								{job.status}
+							</SelectTrigger>
+							<SelectContent>
+								<SelectGroup>
+									<SelectItem value="Enviada">
+										Enviada
+									</SelectItem>
+									<SelectItem value="Em seleção">
+										Em seleção
+									</SelectItem>
+									<SelectItem value="Não Contratado">
+										Não Contratado
+									</SelectItem>
+									<SelectItem value="Emprego Atual">
+										Emprego Atual
+									</SelectItem>
+									<SelectItem value="Desligado">
+										Desligado
+									</SelectItem>
+								</SelectGroup>
+							</SelectContent>
+						</Select> */}
+					</div>
+					<p className="text-sm text-gray-600">
+						<span className="text-black font-black">Cargo:</span>{" "}
+						{job.position}
+					</p>
+					<p className="text-sm text-gray-600">
+						<span className="text-black font-black">
+							Nível de senioridade:
+						</span>{" "}
+						{job.seniority_level}
+					</p>
+					<p className="text-sm text-gray-600">
+						<span className="text-black font-black">
+							Salário Inicial:
+						</span>{" "}
+						{getCurrencySymbol(job.payment_currency)} {""}
+						{job.initial_salary} <br />
+						<span className="text-black font-black">
+							Salário Atual:
+						</span>{" "}
+						{""}
+						{getCurrencySymbol(job.payment_currency)} {""}
+						{job.current_salary}
+					</p>
+					<p className="text-sm text-gray-600">
+						<span className="text-black font-black">
+							Modalidade:
+						</span>{" "}
+						{job.vacancy_modality}
+					</p>
+					<p className="text-sm text-gray-600">
+						<span className="text-black font-black">
+							Regime de trabalho:
+						</span>{" "}
+						{job.work_regime}
+					</p>
+					<p className="text-sm text-gray-600">
+						<span className="text-black font-black">
+							Localidade:
+						</span>{" "}
+						{job.place}
+					</p>
+                    <p className="text-sm text-gray-600">
+                        <span className="text-black font-black">Status:</span> {job.status}
+                    </p>
+					<p className="text-sm text-gray-600">
+						<span className="text-black font-black">
+							Criada em:
+						</span>{" "}
+						{formatDate(job.created_at)}
+					</p>
+					<p className="text-sm text-gray-600">
+						<span className="text-black font-black">
+							Atualizada:
+						</span>{" "}
+						{formatRelativeDate(job.updated_at)}
+					</p>
+					<div className="flex gap-2 mt-2">
+						<Button
+							tabIndex={0}
+							onClick={() => onEditJob(job.id)}
+							className="hover:bg-yellow-500 focus-visible:ring-blue-400 focus-visible:ring-4">
+							Editar
+						</Button>
+						<AlertDialog>
+							<AlertDialogTrigger asChild>
+								<Button
+									tabIndex={0}
+									className="hover:bg-red-600 focus-visible:ring-blue-400 focus-visible:ring-4">
+									Excluir
+								</Button>
+							</AlertDialogTrigger>
+							<AlertDialogContent>
+								<AlertDialogHeader>
+									<AlertDialogTitle>
+										Você tem certeza que deseja excluir esta
+										candidatura?
+									</AlertDialogTitle>
+									<AlertDialogDescription>
+										Atenção! Esta ação é irreversível. Ao
+										confirmar, sua candidatura será
+										permanentemente excluída, e todos os
+										dados associados a ela serão removidos.
+									</AlertDialogDescription>
+								</AlertDialogHeader>
+								<AlertDialogFooter>
+									<AlertDialogCancel>
+										Cancelar
+									</AlertDialogCancel>
+									<AlertDialogAction
+										onClick={() =>
+											onDeleteJob(
+												job.id,
+												job.company_name
+											)
+										}
 										className="hover:bg-red-600 focus-visible:ring-blue-400 focus-visible:ring-4">
-										<svg
-											className="hover-red"
-											xmlns="http://www.w3.org/2000/svg"
-											width="26"
-											height="26"
-											viewBox="0 0 24 24">
-											<path
-												fill="#fff"
-												fill-rule="evenodd"
-												d="m6.774 6.4l.812 13.648a.8.8 0 0 0 .798.752h7.232a.8.8 0 0 0 .798-.752L17.226 6.4h1.203l-.817 13.719A2 2 0 0 1 15.616 22H8.384a2 2 0 0 1-1.996-1.881L5.571 6.4zM9.5 9h1.2l.5 9H10zm3.8 0h1.2l-.5 9h-1.2zM4.459 2.353l15.757 2.778a.5.5 0 0 1 .406.58L20.5 6.4L3.758 3.448l.122-.69a.5.5 0 0 1 .579-.405m6.29-1.125l3.94.695a.5.5 0 0 1 .406.58l-.122.689l-4.924-.869l.122-.689a.5.5 0 0 1 .579-.406z"
-											/>
-										</svg>
 										Excluir
-									</Button>
-								</AlertDialogTrigger>
-								<AlertDialogContent>
-									<AlertDialogHeader>
-										<AlertDialogTitle>
-											Você tem certeza que deseja excluir
-											esta candidatura?
-										</AlertDialogTitle>
-										<AlertDialogDescription>
-											Atenção! Esta ação é irreversível.
-											Ao confirmar, sua candidatura será
-											permanentemente excluída, e todos os
-											dados associados a ela serão
-											removidos.
-										</AlertDialogDescription>
-									</AlertDialogHeader>
-									<AlertDialogFooter>
-										<AlertDialogCancel>
-											Cancelar
-										</AlertDialogCancel>
-										<AlertDialogAction
-											onClick={() =>
-												onDeleteJob(
-													job.id,
-													job.company_name
-												)
-											}
-											className="hover:bg-red-600 focus-visible:ring-blue-400 focus-visible:ring-4">
-											<svg
-												className="hover-red"
-												xmlns="http://www.w3.org/2000/svg"
-												width="26"
-												height="26"
-												viewBox="0 0 24 24">
-												<path
-													fill="#fff"
-													fill-rule="evenodd"
-													d="m6.774 6.4l.812 13.648a.8.8 0 0 0 .798.752h7.232a.8.8 0 0 0 .798-.752L17.226 6.4h1.203l-.817 13.719A2 2 0 0 1 15.616 22H8.384a2 2 0 0 1-1.996-1.881L5.571 6.4zM9.5 9h1.2l.5 9H10zm3.8 0h1.2l-.5 9h-1.2zM4.459 2.353l15.757 2.778a.5.5 0 0 1 .406.58L20.5 6.4L3.758 3.448l.122-.69a.5.5 0 0 1 .579-.405m6.29-1.125l3.94.695a.5.5 0 0 1 .406.58l-.122.689l-4.924-.869l.122-.689a.5.5 0 0 1 .579-.406z"
-												/>
-											</svg>
-											Excluir
-										</AlertDialogAction>
-									</AlertDialogFooter>
-								</AlertDialogContent>
-							</AlertDialog>
-						</TableCell>
-					</TableRow>
-				))}
-			</TableBody>
-		</Table>
+									</AlertDialogAction>
+								</AlertDialogFooter>
+							</AlertDialogContent>
+						</AlertDialog>
+					</div>
+				</div>
+			))}
+		</div>
 	);
 }
