@@ -7,6 +7,14 @@ import {
 	CommandList,
 } from "@/components/ui/command";
 import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import {
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
@@ -651,6 +659,47 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 						)}
 					/>
 				</div>
+
+				{/* Field for choosing the status */}
+                {editingJob && (
+                    <div className="mb-8 flex flex-col gap-2">
+                        <Label className="font-roboto-flex font-black text-lg">
+                            Status
+                        </Label>
+                        <Controller
+                            control={control}
+                            name="status"
+                            render={({ field }) => (
+                                <Select
+                                    value={field.value}
+                                    onValueChange={field.onChange}>
+                                    <SelectTrigger className="w-[180px]">
+                                        <SelectValue placeholder="Selecione o status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectItem value="Enviada">
+                                                Enviada
+                                            </SelectItem>
+                                            <SelectItem value="Em seleção">
+                                                Em seleção
+                                            </SelectItem>
+                                            <SelectItem value="Não contratado">
+                                                Não contratado
+                                            </SelectItem>
+                                            <SelectItem value="Emprego atual">
+                                                Emprego atual
+                                            </SelectItem>
+                                            <SelectItem value="Desligado">
+                                                Desligado
+                                            </SelectItem>
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            )}
+                        />
+                    </div>
+                )}
 
 				<div className="flex justify-center">
 					<Button
