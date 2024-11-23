@@ -58,23 +58,20 @@ export default function JobList({
 	}
 
 	// Formata data relativa
-	function formatRelativeDate(dateString: string | undefined): string {
-		if (!dateString) {
-			return "-";
-		}
-		return `Atualizado há ${formatDistance(
-			new Date(dateString),
-			new Date(),
-			{
-				locale: ptBR,
-			}
-		)}`;
-	}
+    function formatRelativeDate(dateString: string | undefined): string {
+        if (!dateString) {
+            return "-";
+        }
+        const relativeDate = formatDistance(new Date(dateString), new Date(), {
+            locale: ptBR,
+        });
+        return `Há ${relativeDate.replace("menos de um minuto", "menos de 1 min")}`;
+    }
 
 	return (
 		<Table
 			id="jobList"
-			className="scroll-mt-[35px]">
+			className="scroll-mt-[18px]">
 			<TableHeader>
 				<TableRow>
 					<TableHead className="text-center">Id</TableHead>

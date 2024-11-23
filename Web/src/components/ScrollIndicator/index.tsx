@@ -9,7 +9,7 @@ export function ScrollIndicator({
 }: ScrollIndicatorProps) {
 	return (
 		<div className="relative scroll-smooth flex justify-center items-center">
-			<div className="absolute inset-x-0 bottom-64 sm:bottom-48 xl:bottom-4">
+			<div className="absolute inset-x-0 bottom-64 sm:bottom-48 xl:bottom-0">
 				<div className="flex flex-col justify-center items-center text-white">
 					<a href={targetSection}>
 						<svg
