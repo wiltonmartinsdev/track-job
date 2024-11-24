@@ -276,7 +276,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 		<>
 			<form
 				onSubmit={handleSubmit(onSubmit, showErrorAlerts)}
-				className="min-w-80 p-4 bg-gray-100 shadow-md rounded-md drop-shadow-xl">
+				className="min-w-80 p-4 h-[500px]  bg-gray-100 shadow-md rounded-md drop-shadow-xl overflow-y-auto">
 				{/* Field for choosing the company name */}
 				<div className="mb-4 flex flex-col gap-2">
 					<Label
