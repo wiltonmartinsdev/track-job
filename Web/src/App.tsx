@@ -156,7 +156,7 @@ export default function App() {
 	const editingJob = jobs.find((job) => job.id === jobEditionId) || null;
 	return (
 		<div>
-			<header className="bg-blue-600 text-white text-center p-4">
+			<header className="bg-blue-600 text-white text-center p-4 mb-10">
 				<h1 className="font-roboto-flex font-black text-2xl">
 					Track Job - Acompanhamento de Candidaturas
 				</h1>
