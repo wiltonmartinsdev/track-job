@@ -4,14 +4,13 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
-
 import axios, { AxiosError } from "axios";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 
 import JobForm, { Job } from "./components/JobForm";
 import JobList from "./components/JobList";
-import { ScrollIndicator } from "./components/ScrollIndicator";
+// import { ScrollIndicator } from "./components/ScrollIndicator";
 import { api } from "./services/api";
 
 export default function App() {
@@ -59,7 +58,9 @@ export default function App() {
 				);
 			} else {
 				await addJob(job);
-				toast.success("Sua candidatura foi cadastrada com sucesso!");
+				toast.success(
+					`Sua candidatura na empresa ${job.company_name} foi cadastrada com sucesso!`
+				);
 			}
 
 			// Após adicionar/atualizar, busque os dados atualizados
@@ -156,12 +157,17 @@ export default function App() {
 	const editingJob = jobs.find((job) => job.id === jobEditionId) || null;
 	return (
 		<div>
-			<header className="bg-blue-600 text-white text-center p-4 mb-10">
+			<header className="bg-blue-600 text-white text-center p-4">
 				<h1 className="font-roboto-flex font-black text-2xl">
-					Track Job - Acompanhamento de Candidaturas
+					Track Job
 				</h1>
+				<p className="font-roboto-flex font-black text-xl">
+					{" "}
+					Acompanhamento de Candidaturas
+				</p>
+
 				<p className="font-roboto-flex font-black">
-					Total de candidaturas: {jobs.length}
+					Total: {jobs.length}
 				</p>
 			</header>
 
@@ -169,10 +175,10 @@ export default function App() {
 				{!isDialogOpen && <JobForm onAdd={handleAddJob} />}
 			</main>
 
-			<ScrollIndicator
+			{/* <ScrollIndicator
 				targetSection="#jobList"
 				arrowColor="#2563eb"
-			/>
+			/> */}
 
 			<footer>
 				<JobList
