@@ -171,7 +171,7 @@ export default function App() {
 				</p>
 			</header>
 
-			<main className="min-w-80 flex justify-center items-center xl:h-[calc(100vh-88px)]">
+			<main className="min-w-80 flex justify-center items-center xl:h-[calc(100vh-116px)]">
 				{!isDialogOpen && <JobForm onAdd={handleAddJob} />}
 			</main>
 
