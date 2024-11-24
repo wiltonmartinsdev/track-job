@@ -276,7 +276,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 		<>
 			<form
 				onSubmit={handleSubmit(onSubmit, showErrorAlerts)}
-				className="p-4 bg-gray-100 shadow-md rounded-md drop-shadow-xl">
+				className="min-w-80 p-4 bg-gray-100 shadow-md rounded-md drop-shadow-xl">
 				{/* Field for choosing the company name */}
 				<div className="mb-4 flex flex-col gap-2">
 					<Label
@@ -314,31 +314,31 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 								onValueChange={field.onChange}>
 								<div className="flex items-center space-x-2">
 									<RadioGroupItem
-										value="Front-end"
+										value="Desenvolvedor Front-end"
 										id="r1"
 									/>
 									<Label htmlFor="r1">
-										Desenvolvedor Front-end
+										Front-end
 									</Label>
 								</div>
 
 								<div className="flex items-center space-x-2">
 									<RadioGroupItem
-										value="Back-end"
+										value="Desenvolvedor Back-end"
 										id="r2"
 									/>
 									<Label htmlFor="r2">
-										Desenvolvedor Back-end
+										Back-end
 									</Label>
 								</div>
 
 								<div className="flex items-center space-x-2">
 									<RadioGroupItem
-										value="FullStack"
+										value="Desenvolvedor FullStack"
 										id="r3"
 									/>
 									<Label htmlFor="r3">
-										Desenvolvedor FullStack
+										FullStack
 									</Label>
 								</div>
 							</RadioGroup>

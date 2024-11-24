@@ -4,6 +4,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
+
 import axios, { AxiosError } from "axios";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
@@ -28,22 +29,22 @@ export default function App() {
 		}
 	}
 
-    async function updateJob(job: Job) {
-        if (jobEditionId !== null) {
-          try {
-            const response = await api.put(`/${jobEditionId}`, job);
-            const updatedJobs = jobs.map((j) =>
-              j.id === jobEditionId ? response.data : j
-            );
-            setJobs(updatedJobs);
-            setJobEditionId(null);
-            return response.data;
-          } catch (error) {
-            console.error("Erro ao atualizar job:", error);
-            throw error;
-          }
-        }
-      }
+	async function updateJob(job: Job) {
+		if (jobEditionId !== null) {
+			try {
+				const response = await api.put(`/${jobEditionId}`, job);
+				const updatedJobs = jobs.map((j) =>
+					j.id === jobEditionId ? response.data : j
+				);
+				setJobs(updatedJobs);
+				setJobEditionId(null);
+				return response.data;
+			} catch (error) {
+				console.error("Erro ao atualizar job:", error);
+				throw error;
+			}
+		}
+	}
 
 	async function handleAddJob(job: Job) {
 		try {
@@ -164,8 +165,8 @@ export default function App() {
 				</p>
 			</header>
 
-			<main className="flex justify-center items-center h-[calc(100vh-88px)]">
-            {!isDialogOpen && <JobForm onAdd={handleAddJob} />}
+			<main className="min-w-80 flex justify-center items-center xl:h-[calc(100vh-88px)]">
+				{!isDialogOpen && <JobForm onAdd={handleAddJob} />}
 			</main>
 
 			<ScrollIndicator
