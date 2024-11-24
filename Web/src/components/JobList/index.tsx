@@ -66,7 +66,7 @@ export default function JobList({
 						value={`item-${job.id}`}>
 						<AccordionTrigger>{job.company_name}</AccordionTrigger>
 						<AccordionContent>
-							<div>
+							<div className="space-y-1">
 								<p>
 									<strong>Cargo:</strong> {job.position}
 								</p>

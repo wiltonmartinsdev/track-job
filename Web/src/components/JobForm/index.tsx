@@ -273,10 +273,9 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 	}, [editingJob, setValue]);
 
 	return (
-		<>
+		<div className=" min-w-80 xl:w-[650px] h-[500px] p-4 my-10 bg-gray-100 rounded-lg overflow-y-auto shadow-md drop-shadow-sm xl:my-0 ">
 			<form
-				onSubmit={handleSubmit(onSubmit, showErrorAlerts)}
-				className="min-w-80 p-4 bg-gray-100 shadow-md rounded-md drop-shadow-xl my-10">
+				onSubmit={handleSubmit(onSubmit, showErrorAlerts)}>
 				{/* Field for choosing the company name */}
 				<div className="mb-4 flex flex-col gap-2">
 					<Label
@@ -724,6 +723,6 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 					</Button>
 				</div>
 			</form>
-		</>
+		</div>
 	);
 }
