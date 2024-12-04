@@ -273,9 +273,8 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 	}, [editingJob, setValue]);
 
 	return (
-		<div className=" min-w-80 xl:w-[650px] h-[500px] p-4 my-10 bg-gray-100 rounded-lg overflow-y-auto shadow-md drop-shadow-sm xl:my-0 ">
-			<form
-				onSubmit={handleSubmit(onSubmit, showErrorAlerts)}>
+		<div className=" min-w-80 p-4 sm:w-full h-auto sm:h-full bg-gray-100 rounded-lg shadow-md drop-shadow-sm">
+			<form onSubmit={handleSubmit(onSubmit, showErrorAlerts)}>
 				{/* Field for choosing the company name */}
 				<div className="mb-4 flex flex-col gap-2">
 					<Label
@@ -316,9 +315,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 										value="Desenvolvedor Front-end"
 										id="r1"
 									/>
-									<Label htmlFor="r1">
-										Front-end
-									</Label>
+									<Label htmlFor="r1">Front-end</Label>
 								</div>
 
 								<div className="flex items-center space-x-2">
@@ -326,9 +323,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 										value="Desenvolvedor Back-end"
 										id="r2"
 									/>
-									<Label htmlFor="r2">
-										Back-end
-									</Label>
+									<Label htmlFor="r2">Back-end</Label>
 								</div>
 
 								<div className="flex items-center space-x-2">
@@ -336,9 +331,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 										value="Desenvolvedor FullStack"
 										id="r3"
 									/>
-									<Label htmlFor="r3">
-										FullStack
-									</Label>
+									<Label htmlFor="r3">FullStack</Label>
 								</div>
 							</RadioGroup>
 						)}
