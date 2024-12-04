@@ -156,7 +156,7 @@ export default function App() {
 
 	const editingJob = jobs.find((job) => job.id === jobEditionId) || null;
 	return (
-		<div>
+		<div className="min-h-screen flex flex-col">
 			<header className="bg-blue-600 text-white text-center p-4">
 				<h1 className="font-roboto-flex font-black text-2xl">
 					Track Job
@@ -171,7 +171,9 @@ export default function App() {
 				</p>
 			</header>
 
-			<main className="min-w-80 flex justify-center items-center xl:h-[calc(100vh-116px)]">
+            
+
+			<main className="min-w-80 flex-grow flex justify-center items-center sm:px-24">
 				{!isDialogOpen && <JobForm onAdd={handleAddJob} />}
 			</main>
 
