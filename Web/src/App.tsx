@@ -157,7 +157,7 @@ export default function App() {
 	const editingJob = jobs.find((job) => job.id === jobEditionId) || null;
 	return (
 		<div className="min-h-screen flex flex-col">
-			<header className="bg-blue-600 text-white text-center p-4">
+			<header className="bg-blue-600 text-white text-center p-4 mb-10 sm:m-0">
 				<h1 className="font-roboto-flex font-black text-2xl">
 					Track Job
 				</h1>
@@ -171,16 +171,9 @@ export default function App() {
 				</p>
 			</header>
 
-            
-
-			<main className="min-w-80 flex-grow flex justify-center items-center sm:px-24">
+			<main className="min-w-80 flex-grow flex justify-center items-center mb-10 sm:mb-0 sm:px-24">
 				{!isDialogOpen && <JobForm onAdd={handleAddJob} />}
 			</main>
-
-			{/* <ScrollIndicator
-				targetSection="#jobList"
-				arrowColor="#2563eb"
-			/> */}
 
 			<footer>
 				<JobList
