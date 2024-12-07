@@ -10,7 +10,6 @@ import { toast } from "react-toastify";
 
 import JobForm, { Job } from "./components/JobForm";
 import JobList from "./components/JobList";
-// import { ScrollIndicator } from "./components/ScrollIndicator";
 import { api } from "./services/api";
 
 export default function App() {
@@ -171,7 +170,7 @@ export default function App() {
 				</p>
 			</header>
 
-			<main className="min-w-80 flex-grow flex justify-center items-center mb-10 sm:mb-0 sm:px-24">
+			<main className="min-w-80 flex-grow flex justify-center items-center lg:items-start mb-10 sm:mb-0 sm:px-24 lg:mt-36">
 				{!isDialogOpen && <JobForm onAdd={handleAddJob} />}
 			</main>
 
@@ -196,6 +195,7 @@ export default function App() {
 					<JobForm
 						onAdd={handleAddJob}
 						editingJob={editingJob}
+                        isInModal
 					/>
 				</DialogContent>
 			</Dialog>

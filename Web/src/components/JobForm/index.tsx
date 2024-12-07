@@ -88,6 +88,8 @@ export type Job = {
 type JobFormProps = {
 	onAdd: (job: Job) => void;
 	editingJob?: Job | null;
+    isInModal?: boolean;
+    
 };
 
 const brazilianStates = [
@@ -196,7 +198,7 @@ const brazilianStates = [
 		label: "Tocantins",
 	},
 ];
-export default function JobForm({ onAdd, editingJob }: JobFormProps) {
+export default function JobForm({ onAdd, editingJob, isInModal = false }: JobFormProps) {
 	const { handleSubmit, reset, setValue, control } = useForm<Job>({
 		resolver: zodResolver(jobFormSchema),
 		defaultValues: editingJob || {
@@ -273,7 +275,7 @@ export default function JobForm({ onAdd, editingJob }: JobFormProps) {
 	}, [editingJob, setValue]);
 
 	return (
-		<div className=" min-w-80 p-4 sm:w-full h-auto sm:h-full bg-gray-100 rounded-lg shadow-md drop-shadow-sm">
+		<div className={`min-w-80 p-4 sm:w-full ${isInModal ? "lg:w-full" : "lg:w-3/4 xl:w-1/2"} h-auto sm:h-full bg-gray-100 rounded-lg shadow-md drop-shadow-sm`}>
 			<form onSubmit={handleSubmit(onSubmit, showErrorAlerts)}>
 				{/* Field for choosing the company name */}
 				<div className="mb-4 flex flex-col gap-2">
