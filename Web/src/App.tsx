@@ -4,6 +4,15 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
+import {
+	Pagination,
+	PaginationContent,
+	PaginationEllipsis,
+	PaginationItem,
+	PaginationLink,
+	PaginationNext,
+	PaginationPrevious,
+} from "@/components/ui/pagination";
 import axios, { AxiosError } from "axios";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
@@ -16,6 +25,9 @@ export default function App() {
 	const [jobs, setJobs] = useState<Job[]>([]);
 	const [jobEditionId, setJobEditionId] = useState<number | null>(null);
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
+	// const [currentPage, setCurrentPage] = useState(1);
+	// const [totalPages, setTotalPages] = useState(1);
+	// const jobsPerPage = 5;
 
 	async function addJob(job: Job) {
 		try {
@@ -181,6 +193,23 @@ export default function App() {
 					onEditJob={handleEditJob}
 					onDeleteJob={handleDeleteJob}
 				/>
+
+				<Pagination>
+					<PaginationContent>
+						<PaginationItem>
+							<PaginationPrevious href="#" />
+						</PaginationItem>
+						<PaginationItem>
+							<PaginationLink href="#">1</PaginationLink>
+						</PaginationItem>
+						<PaginationItem>
+							<PaginationEllipsis />
+						</PaginationItem>
+						<PaginationItem>
+							<PaginationNext href="#" />
+						</PaginationItem>
+					</PaginationContent>
+				</Pagination>
 			</footer>
 
 			<Dialog
@@ -195,7 +224,7 @@ export default function App() {
 					<JobForm
 						onAdd={handleAddJob}
 						editingJob={editingJob}
-                        isInModal
+						isInModal
 					/>
 				</DialogContent>
 			</Dialog>
