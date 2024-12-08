@@ -174,7 +174,7 @@ export default function App() {
 				{!isDialogOpen && <JobForm onAdd={handleAddJob} />}
 			</main>
 
-			<footer>
+			<footer className="sm:mx-auto sm:w-[85%] lg:w-[70%]  xl:w-1/2">
 				<JobList
 					jobs={jobs}
 					onUpdateStatus={handleUpdateStatus}
