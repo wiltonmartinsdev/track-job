@@ -36,12 +36,13 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { jobService } from "@/services/jobServices";
 
 import { getCurrencySymbol } from "../../utils/currencyUtils";
 import { Input } from "../ui/input";
 
 const jobFormSchema = z.object({
-	id: z.number().optional(),
+	id: z.string().optional(),
 	company_name: z.string().trim().min(4, {
 		message: "Ops! O nome da empresa deve ter no mínimo 4 caracteres.",
 	}),
@@ -66,11 +67,11 @@ const jobFormSchema = z.object({
 	place: z.string().min(4, {
 		message: "Ops! Por favor, selecione um estado para continuar.",
 	}),
-	status: z.string().trim().min(7),
+	status: z.string().trim().min(7).optional(),
 });
 
 export type Job = {
-	id: number;
+	id: string;
 	company_name: string;
 	position: string;
 	seniority_level: string;
@@ -86,10 +87,9 @@ export type Job = {
 };
 
 type JobFormProps = {
-	onAdd: (job: Job) => void;
+	onAdd: (job: Job) => Promise<void>;
 	editingJob?: Job | null;
-    isInModal?: boolean;
-    
+	isInModal?: boolean;
 };
 
 const brazilianStates = [
@@ -198,11 +198,17 @@ const brazilianStates = [
 		label: "Tocantins",
 	},
 ];
-export default function JobForm({ onAdd, editingJob, isInModal = false }: JobFormProps) {
+export default function JobForm({
+	onAdd,
+	editingJob,
+	isInModal = false,
+}: JobFormProps) {
+	const [open, setOpen] = useState(false);
+
 	const { handleSubmit, reset, setValue, control } = useForm<Job>({
 		resolver: zodResolver(jobFormSchema),
 		defaultValues: editingJob || {
-			id: undefined,
+			id: "",
 			company_name: "",
 			position: "",
 			seniority_level: "",
@@ -215,8 +221,6 @@ export default function JobForm({ onAdd, editingJob, isInModal = false }: JobFor
 			place: "",
 		},
 	});
-
-	const [open, setOpen] = useState(false);
 
 	const selectedCurrency = useWatch({
 		control,
@@ -240,18 +244,45 @@ export default function JobForm({ onAdd, editingJob, isInModal = false }: JobFor
 	}
 
 	const onSubmit: SubmitHandler<Job> = async (data) => {
-		console.log("Dados antes do envio:", {
+		const formattedData = {
 			...data,
 			initial_salary: Number(data.initial_salary),
 			current_salary: Number(data.current_salary),
-		});
-		await onAdd({
-			...data,
-			initial_salary: Number(data.initial_salary),
-			current_salary: Number(data.current_salary),
-		});
-		reset();
-		setOpen(false);
+		};
+
+		try {
+			// Busca as vagas existentes na API
+			const existingJobs = await jobService.fetch();
+
+			// Exclui a vaga atual da validação
+			const hasCurrentJob = existingJobs.filter(
+				(job: Job) =>
+					job.status === "Emprego atual" && job.id !== editingJob?.id
+			);
+
+			if (
+				hasCurrentJob.length >= 2 &&
+				formattedData.status === "Emprego atual"
+			) {
+				toast.error(
+					"Ops! Você só pode ter no máximo duas vagas com o status 'Emprego atual'."
+				);
+
+				// Restaura o status original no formulário
+				setValue("status", editingJob?.status || "Enviado");
+				return;
+			}
+
+			// Prosseguir com a atualização
+			await onAdd(formattedData);
+			reset();
+			setOpen(false);
+		} catch (error) {
+			console.error("Erro ao atualizar a vaga:", error);
+			toast.error(
+				"Ocorreu um erro ao atualizar a vaga. Tente novamente."
+			);
+		}
 	};
 
 	useEffect(() => {
@@ -267,15 +298,14 @@ export default function JobForm({ onAdd, editingJob, isInModal = false }: JobFor
 			setValue("vacancy_modality", editingJob.vacancy_modality);
 			setValue("work_regime", editingJob.work_regime);
 			setValue("place", editingJob.place);
-
-			Object.entries(editingJob).forEach(([key, value]) => {
-				setValue(key as keyof Job, value);
-			});
 		}
 	}, [editingJob, setValue]);
 
 	return (
-		<div className={`min-w-80 p-4 sm:w-full ${isInModal ? "lg:w-full" : "lg:w-3/4 xl:w-1/2"} h-auto sm:h-full bg-gray-100 rounded-lg shadow-md drop-shadow-sm`}>
+		<div
+			className={`min-w-80 p-4 sm:w-full ${
+				isInModal ? "lg:w-full" : "lg:w-3/4 xl:w-1/2"
+			} h-auto sm:h-full bg-gray-100 rounded-lg shadow-md drop-shadow-sm`}>
 			<form onSubmit={handleSubmit(onSubmit, showErrorAlerts)}>
 				{/* Field for choosing the company name */}
 				<div className="mb-4 flex flex-col gap-2">
