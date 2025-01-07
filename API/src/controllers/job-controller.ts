@@ -44,6 +44,7 @@ export default class JobController {
 				data: {
 					...bodySchema.parse(request.body),
 					status: "Enviada",
+                    process_phase: "Envio do Currículo",
 				},
 			});
 
@@ -70,6 +71,7 @@ export default class JobController {
 				work_regime,
 				place,
 				status,
+                process_phase,
 			} = z
 				.object({
 					company_name: z.string().trim().min(4),
@@ -82,6 +84,8 @@ export default class JobController {
 					work_regime: z.string().trim().min(2),
 					place: z.string().trim().min(4),
 					status: z.string().trim().min(7),
+                    process_phase: z.string().trim().min(5),
+
 				})
 				.parse(request.body);
 
@@ -122,6 +126,7 @@ export default class JobController {
 					work_regime,
 					place,
 					status,
+                    process_phase,
 					updated_at: new Date(), // Atualiza a data para o momento atual
 				},
 			});

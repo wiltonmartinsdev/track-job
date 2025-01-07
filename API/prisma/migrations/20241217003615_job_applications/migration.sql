@@ -11,6 +11,7 @@ CREATE TABLE "job-applications" (
     "work_regime" TEXT NOT NULL,
     "place" TEXT NOT NULL,
     "status" TEXT NOT NULL,
+    "process_phase" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
