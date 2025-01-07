@@ -72,7 +72,7 @@ export default function JobList({
 									<strong>Cargo:</strong> {job.position}
 								</p>
 								<p>
-									<strong>Nível de senioridade:</strong>{" "}
+									<strong>Nível de Senioridade:</strong>{" "}
 									{job.seniority_level}
 								</p>
 								<p>
@@ -92,7 +92,7 @@ export default function JobList({
 									{job.vacancy_modality}
 								</p>
 								<p>
-									<strong>Regime de trabalho:</strong>{" "}
+									<strong>Regime de Trabalho:</strong>{" "}
 									{job.work_regime}
 								</p>
 								<p>
@@ -100,6 +100,10 @@ export default function JobList({
 								</p>
 								<p>
 									<strong>Status:</strong> {job.status}
+								</p>
+								<p>
+									<strong>Fase do Processo Seletivo:</strong>{" "}
+									{job.process_phase}
 								</p>
 								<p>
 									<strong>Criada em:</strong>{" "}

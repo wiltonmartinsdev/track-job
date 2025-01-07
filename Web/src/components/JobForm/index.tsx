@@ -11,6 +11,7 @@ import {
 	SelectContent,
 	SelectGroup,
 	SelectItem,
+	SelectLabel,
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
@@ -68,6 +69,7 @@ const jobFormSchema = z.object({
 		message: "Ops! Por favor, selecione um estado para continuar.",
 	}),
 	status: z.string().trim().min(7).optional(),
+	process_phase: z.string().trim().min(5).optional(),
 });
 
 export type Job = {
@@ -82,6 +84,7 @@ export type Job = {
 	work_regime: string;
 	place: string;
 	status: string;
+	process_phase: string;
 	created_at: string;
 	updated_at: string;
 };
@@ -216,6 +219,7 @@ export default function JobForm({
 			initial_salary: 0,
 			current_salary: 0,
 			status: "Enviada",
+			process_phase: "Envio do Currículo",
 			vacancy_modality: "",
 			work_regime: "",
 			place: "",
@@ -295,6 +299,7 @@ export default function JobForm({
 			setValue("initial_salary", Number(editingJob.initial_salary));
 			setValue("current_salary", Number(editingJob.current_salary));
 			setValue("status", editingJob.status);
+			setValue("process_phase", editingJob.process_phase);
 			setValue("vacancy_modality", editingJob.vacancy_modality);
 			setValue("work_regime", editingJob.work_regime);
 			setValue("place", editingJob.place);
@@ -312,7 +317,7 @@ export default function JobForm({
 					<Label
 						className="font-roboto-flex font-black text-lg
                 ">
-						Nome da empresa
+						Nome da Empresa
 					</Label>
 					<Controller
 						control={control}
@@ -375,7 +380,7 @@ export default function JobForm({
 					<label
 						className="font-roboto-flex font-black text-lg
                 ">
-						Nível de senioridade
+						Nível de Senioridade
 					</label>
 					<Controller
 						control={control}
@@ -416,7 +421,7 @@ export default function JobForm({
 				{/* Field to choose payment currency */}
 				<div className="mb-8 flex flex-col gap-2">
 					<Label className="font-roboto-flex font-black text-lg">
-						Moeda de pagamento
+						Moeda de Pagamento
 					</Label>
 					<Controller
 						control={control}
@@ -580,7 +585,7 @@ export default function JobForm({
 					<label
 						className="font-roboto-flex font-black text-lg
                 ">
-						Regime de trabalho
+						Regime de Trabalho
 					</label>
 					<Controller
 						control={control}
@@ -686,45 +691,132 @@ export default function JobForm({
 
 				{/* Field for choosing the status */}
 				{editingJob && (
-					<div className="mb-8 flex flex-col gap-2">
-						<Label className="font-roboto-flex font-black text-lg">
-							Status
-						</Label>
-						<Controller
-							control={control}
-							name="status"
-							render={({ field }) => (
-								<Select
-									value={field.value}
-									onValueChange={field.onChange}>
-									<SelectTrigger
-										className="w-[180px]"
-										tabIndex={0}>
-										<SelectValue placeholder="Selecione o status" />
-									</SelectTrigger>
-									<SelectContent>
-										<SelectGroup>
-											<SelectItem value="Enviada">
-												Enviada
-											</SelectItem>
-											<SelectItem value="Em seleção">
-												Em seleção
-											</SelectItem>
-											<SelectItem value="Não contratado">
-												Não contratado
-											</SelectItem>
-											<SelectItem value="Emprego atual">
-												Emprego atual
-											</SelectItem>
-											<SelectItem value="Desligado">
-												Desligado
-											</SelectItem>
-										</SelectGroup>
-									</SelectContent>
-								</Select>
-							)}
-						/>
-					</div>
+					<>
+						<div className="mb-8 flex flex-col gap-2">
+							<Label className="font-roboto-flex font-black text-lg">
+								Status
+							</Label>
+							<Controller
+								control={control}
+								name="status"
+								render={({ field }) => (
+									<Select
+										value={field.value}
+										onValueChange={field.onChange}>
+										<SelectTrigger
+											className="w-[180px]"
+											tabIndex={0}>
+											<SelectValue placeholder="Selecione o status" />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectGroup>
+												<SelectItem value="Enviada">
+													Enviada
+												</SelectItem>
+												<SelectItem value="Em seleção">
+													Em seleção
+												</SelectItem>
+												<SelectItem value="Não contratado">
+													Não contratado
+												</SelectItem>
+												<SelectItem value="Emprego atual">
+													Emprego atual
+												</SelectItem>
+												<SelectItem value="Desligado">
+													Desligado
+												</SelectItem>
+											</SelectGroup>
+										</SelectContent>
+									</Select>
+								)}
+							/>
+						</div>
+						{/*  */}
+						<div className="mb-8 flex flex-col gap-2">
+							<Label className="font-roboto-flex font-black text-lg">
+								Fase do Processo
+							</Label>
+							<Controller
+								control={control}
+								name="process_phase"
+								render={({ field }) => (
+									<Select
+										value={field.value}
+										onValueChange={field.onChange}>
+										<SelectTrigger
+											className="w-[180px]"
+											tabIndex={0}>
+											<SelectValue placeholder="Fase do processo seletivo" />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectGroup>
+												<SelectLabel>
+													Candidatura Inicial
+												</SelectLabel>
+												<SelectItem value="Envio do Currículo">
+													Envio do Currículo
+												</SelectItem>
+												<SelectItem value="Triagem de Currículos">
+													Triagem de Currículos
+												</SelectItem>
+											</SelectGroup>
+
+											<SelectGroup>
+												<SelectLabel>
+													Avaliações Técnicas
+												</SelectLabel>
+												<SelectItem value="Teste Técnico Online">
+													Teste Técnico Online
+												</SelectItem>
+												<SelectItem value="Desafio de Código">
+													Desafio de Código
+												</SelectItem>
+												<SelectItem value="Prova de Lógica">
+													Prova de Lógica
+												</SelectItem>
+											</SelectGroup>
+
+											<SelectGroup>
+												<SelectLabel>
+													Entrevistas
+												</SelectLabel>
+												<SelectItem value="Entrevista com RH">
+													Entrevista com RH
+												</SelectItem>
+												<SelectItem value="Entrevista Técnica">
+													Entrevista Técnica
+												</SelectItem>
+												<SelectItem value="Entrevista com o Gestor">
+													Entrevista com o Gestor
+												</SelectItem>
+												<SelectItem value="Painel Técnico">
+													Painel Técnico
+												</SelectItem>
+											</SelectGroup>
+
+											<SelectGroup>
+												<SelectLabel>
+													Etapas Finais
+												</SelectLabel>
+												<SelectItem value="Prova de Soft Skills">
+													Prova de Soft Skills
+												</SelectItem>
+												<SelectItem value="Entrevista Técnica">
+													Entrevista Técnica
+												</SelectItem>
+												<SelectItem value="Entrevista Final">
+													Entrevista Final
+												</SelectItem>
+												<SelectItem value="Alinhamento de Proposta">
+													Alinhamento de Proposta
+												</SelectItem>
+											</SelectGroup>
+										</SelectContent>
+									</Select>
+								)}
+							/>
+						</div>
+					</>
 				)}
 
 				<div className="flex justify-center">
