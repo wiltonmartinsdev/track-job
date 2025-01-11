@@ -1,3 +1,4 @@
+import { formatInTimeZone } from "date-fns-tz";
 import { NextFunction, Request, Response } from "express";
 import z from "zod";
 
@@ -20,7 +21,22 @@ export default class JobController {
 				},
 			});
 
-			response.json(jobs);
+			// Convertendo as datas para UTC-3
+			const formattedJobs = jobs.map((job) => ({
+				...job,
+				created_at: formatInTimeZone(
+					job.created_at,
+					"America/Sao_Paulo",
+					"yyyy-MM-dd HH:mm:ss"
+				),
+				updated_at: formatInTimeZone(
+					job.updated_at,
+					"America/Sao_Paulo",
+					"yyyy-MM-dd HH:mm:ss"
+				),
+			}));
+
+			response.json(formattedJobs);
 		} catch (error) {
 			next(error);
 		}
@@ -44,7 +60,7 @@ export default class JobController {
 				data: {
 					...bodySchema.parse(request.body),
 					status: "Enviada",
-                    process_phase: "Envio do Currículo",
+					process_phase: "Envio do Currículo",
 				},
 			});
 
@@ -71,7 +87,7 @@ export default class JobController {
 				work_regime,
 				place,
 				status,
-                process_phase,
+				process_phase,
 			} = z
 				.object({
 					company_name: z.string().trim().min(4),
@@ -84,8 +100,7 @@ export default class JobController {
 					work_regime: z.string().trim().min(2),
 					place: z.string().trim().min(4),
 					status: z.string().trim().min(7),
-                    process_phase: z.string().trim().min(5),
-
+					process_phase: z.string().trim().min(5),
 				})
 				.parse(request.body);
 
@@ -126,7 +141,7 @@ export default class JobController {
 					work_regime,
 					place,
 					status,
-                    process_phase,
+					process_phase,
 					updated_at: new Date(), // Atualiza a data para o momento atual
 				},
 			});
