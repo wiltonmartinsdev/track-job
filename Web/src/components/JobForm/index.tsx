@@ -273,7 +273,7 @@ export default function JobForm({
 				);
 
 				// Restaura o status original no formulário
-				setValue("status", editingJob?.status || "Enviado");
+				setValue("status", editingJob?.status || "Enviada");
 				return;
 			}
 
@@ -311,7 +311,9 @@ export default function JobForm({
 			className={`min-w-80 p-4 sm:w-full ${
 				isInModal ? "lg:w-full" : "lg:w-3/4 xl:w-1/2"
 			} h-auto sm:h-full bg-gray-100 rounded-lg shadow-md drop-shadow-sm`}>
-			<form onSubmit={handleSubmit(onSubmit, showErrorAlerts)}>
+			<form
+				onSubmit={handleSubmit(onSubmit, showErrorAlerts)}
+		>
 				{/* Field for choosing the company name */}
 				<div className="mb-4 flex flex-col gap-2">
 					<Label
@@ -665,6 +667,7 @@ export default function JobForm({
 																field.onChange(
 																	currentValue
 																);
+																
 																setOpen(false);
 															}}>
 															{stateBr.label}
@@ -801,9 +804,7 @@ export default function JobForm({
 												<SelectItem value="Prova de Soft Skills">
 													Prova de Soft Skills
 												</SelectItem>
-												<SelectItem value="Entrevista Técnica">
-													Entrevista Técnica
-												</SelectItem>
+
 												<SelectItem value="Entrevista Final">
 													Entrevista Final
 												</SelectItem>
@@ -823,7 +824,8 @@ export default function JobForm({
 					<Button
 						type="submit"
 						className="focus-visible:ring-blue-400 focus-visible:ring-4"
-						tabIndex={0}>
+						tabIndex={0}
+						>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="24"
