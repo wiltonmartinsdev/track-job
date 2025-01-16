@@ -4,121 +4,66 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
-import axios, { AxiosError } from "axios";
 import { useState, useEffect } from "react";
-import { toast } from "react-toastify";
 
 import JobForm, { Job } from "./components/JobForm";
 import JobList from "./components/JobList";
-import { api } from "./services/api";
+import { jobService } from "./services/jobServices";
+import { notify } from "./utils/notifications";
 
 export default function App() {
 	const [jobs, setJobs] = useState<Job[]>([]);
-	const [jobEditionId, setJobEditionId] = useState<number | null>(null);
+	const [jobEditionId, setJobEditionId] = useState<string | null>(null);
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-	async function addJob(job: Job) {
+	async function loadJobs() {
 		try {
-			const response = await api.post("", job);
-
-			setJobs([...jobs, response.data]);
+			const data = await jobService.fetch();
+			setJobs(data);
 		} catch (error) {
-			console.error("Erro ao adicionar job:", error);
+			notify.error(error as Error);
 		}
 	}
 
-	async function updateJob(job: Job) {
-		if (jobEditionId !== null) {
-			try {
-				const response = await api.put(`/${jobEditionId}`, job);
-				const updatedJobs = jobs.map((j) =>
-					j.id === jobEditionId ? response.data : j
-				);
-				setJobs(updatedJobs);
-				setJobEditionId(null);
-				return response.data;
-			} catch (error) {
-				console.error("Erro ao atualizar job:", error);
-				throw error;
-			}
-		}
-	}
-
-	async function handleAddJob(job: Job) {
+	async function handleJobSubmission(job: Job) {
 		try {
-			if (jobEditionId !== null) {
-				const updatedJob = await updateJob(job);
-
+			if (jobEditionId) {
+				const updatedJob = await jobService.update(jobEditionId, job);
 				setJobs(
 					jobs.map((j) => (j.id === jobEditionId ? updatedJob : j))
 				);
-				toast.success(
-					`Suas alterações na empresa ${job.company_name} foram realizadas com sucesso!`
+				notify.success(
+					`Alterações na empresa ${job.company_name} realizadas com sucesso!`
 				);
 			} else {
-				await addJob(job);
-				toast.success(
-					`Sua candidatura na empresa ${job.company_name} foi cadastrada com sucesso!`
+				const newJob = await jobService.create(job);
+				setJobs([...jobs, newJob]);
+				notify.success(
+					`Candidatura na empresa ${job.company_name} cadastrada com sucesso!`
 				);
 			}
 
-			// Após adicionar/atualizar, busque os dados atualizados
-			const response = await api.get("/");
-			setJobs(response.data);
+			await loadJobs();
 			setIsDialogOpen(false);
+            setJobEditionId(null);
 		} catch (error) {
-			console.error("Erro ao processar job:", error);
+			notify.error(error as Error);
 		}
 	}
 
-	async function handleUpdateStatus(id: number, status: string) {
+	async function handleDeleteJob(id: string, company_name: string) {
 		try {
-			const job = jobs.find((job) => job.id === id);
-			if (!job) return;
-
-			const now = new Date().toISOString();
-
-			await api.put(`/${id}`, {
-				...job,
-				status,
-				updated_at: now,
-			});
-
-			const updatedJobs = jobs.map((job) =>
-				job.id === id
-					? {
-							...job,
-							status,
-							updated_at: now,
-					  }
-					: job
-			);
-
-			setJobs(updatedJobs);
-			toast.success(
-				`Suas alterações na empresa ${job.company_name} foram realizadas com sucesso!`
+			await jobService.delete(id);
+			setJobs(jobs.filter((job) => job.id !== id));
+			notify.success(
+				`A candidatura na empresa ${company_name} foi excluída com sucesso!`
 			);
 		} catch (error) {
-			if (axios.isAxiosError(error)) {
-				const serverError = error as AxiosError<{ message: string }>;
-				if (
-					serverError.response &&
-					serverError.response.status === 400
-				) {
-					const errorMessage = serverError.response.data.message;
-					toast.warning(errorMessage);
-				} else {
-					console.error("Erro ao atualizar status do job:", error);
-					toast.warning("Erro ao atualizar status do job");
-				}
-			} else {
-				console.error("Erro inesperado:", error);
-				toast.warning("Erro inesperado ao atualizar status do job");
-			}
+			notify.error(error as Error);
 		}
 	}
 
-	function handleEditJob(id: number) {
+	function handleEditJob(id: string) {
 		const jobToEdit = jobs.find((job) => job.id === id);
 		if (jobToEdit) {
 			setJobEditionId(id);
@@ -126,34 +71,12 @@ export default function App() {
 		}
 	}
 
-	async function handleDeleteJob(id: number, company_name: string) {
-		try {
-			await api.delete(`/${id}`);
-			const updatedJobs = jobs.filter((job) => job.id !== id);
-			setJobs(updatedJobs);
-			toast.success(
-				`A sua candidatura na empresa ${company_name} foi excluída com sucesso!`
-			);
-		} catch (error) {
-			console.error("Erro ao deletar job:", error);
-		}
-	}
+	const editingJob = jobs.find((job) => job.id === jobEditionId) || null;
 
-	// Carregar jobs do back-end ao montar o componente
 	useEffect(() => {
-		async function fetchJobs() {
-			try {
-				const response = await api.get("/");
-
-				setJobs(response.data);
-			} catch (error) {
-				console.error("Erro ao carregar jobs:", error);
-			}
-		}
-		fetchJobs();
+		loadJobs();
 	}, []);
 
-	const editingJob = jobs.find((job) => job.id === jobEditionId) || null;
 	return (
 		<div className="min-h-screen flex flex-col">
 			<header className="bg-blue-600 text-white text-center p-4 mb-10 sm:m-0">
@@ -161,23 +84,20 @@ export default function App() {
 					Track Job
 				</h1>
 				<p className="font-roboto-flex font-black text-xl">
-					{" "}
 					Acompanhamento de Candidaturas
 				</p>
-
 				<p className="font-roboto-flex font-black">
 					Total: {jobs.length}
 				</p>
 			</header>
 
 			<main className="min-w-80 flex justify-center items-center lg:mt-10 sm:px-24">
-				{!isDialogOpen && <JobForm onAdd={handleAddJob} />}
+				{!isDialogOpen && <JobForm onAdd={handleJobSubmission} />}
 			</main>
 
-			<footer className="sm:mx-auto sm:w-[85%] lg:w-[70%]  xl:w-1/2">
+			<footer className="sm:mx-auto sm:w-[85%] lg:w-[70%] xl:w-1/2">
 				<JobList
 					jobs={jobs}
-					onUpdateStatus={handleUpdateStatus}
 					onEditJob={handleEditJob}
 					onDeleteJob={handleDeleteJob}
 				/>
@@ -185,7 +105,12 @@ export default function App() {
 
 			<Dialog
 				open={isDialogOpen}
-				onOpenChange={setIsDialogOpen}>
+				onOpenChange={(open) => {
+                    setIsDialogOpen(open);
+                    if (!open) {
+                        setJobEditionId(null);
+                    }
+                }}>
 				<DialogContent>
 					<DialogHeader>
 						<DialogTitle className="text-center">
@@ -193,12 +118,13 @@ export default function App() {
 						</DialogTitle>
 					</DialogHeader>
 					<JobForm
-						onAdd={handleAddJob}
+						onAdd={handleJobSubmission}
 						editingJob={editingJob}
-                        isInModal
+						isInModal
 					/>
 				</DialogContent>
 			</Dialog>
 		</div>
 	);
 }
+  

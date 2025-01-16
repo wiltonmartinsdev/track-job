@@ -8,4 +8,4 @@ const jobController = new JobController();
 jobRoutes.get("/", jobController.index);
 jobRoutes.post("/", jobController.create);
 jobRoutes.put("/:id", jobController.update);
-jobRoutes.delete("/:id", jobController.delete);
+// jobRoutes.delete("/:id", jobController.delete);
