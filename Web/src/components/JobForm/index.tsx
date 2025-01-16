@@ -207,8 +207,11 @@ export default function JobForm({
 	isInModal = false,
 }: JobFormProps) {
 	const [open, setOpen] = useState(false);
+	const [hasChanges, setHasChanges] = useState(false);
+	// Guarde os valores originais
+	const [originalValues, setOriginalValues] = useState<Job | null>(null);
 
-	const { handleSubmit, reset, setValue, control } = useForm<Job>({
+	const { handleSubmit, reset, setValue, control, watch } = useForm<Job>({
 		resolver: zodResolver(jobFormSchema),
 		defaultValues: editingJob || {
 			id: "",
@@ -231,30 +234,32 @@ export default function JobForm({
 		name: "payment_currency",
 	});
 
-	function showErrorAlerts(errors: FieldErrors<Job>) {
-		if (errors.company_name) {
-			return toast.warn(errors.company_name.message);
-		} else if (errors.position) {
-			return toast.warn(errors.position.message);
-		} else if (errors.seniority_level) {
-			return toast.warn(errors.seniority_level.message);
-		} else if (errors.vacancy_modality) {
-			return toast.warn(errors.vacancy_modality.message);
-		} else if (errors.work_regime) {
-			return toast.warn(errors.work_regime.message);
-		} else if (errors.place) {
-			return toast.warn(errors.place.message);
-		}
-	}
+    function showErrorAlerts(errors: FieldErrors<Job>) {
+        if (errors.company_name) {
+            return toast.warn(errors.company_name.message);
+        } else if (errors.position) {
+            return toast.warn(errors.position.message);
+        } else if (errors.seniority_level) {
+            return toast.warn(errors.seniority_level.message);
+        } else if (errors.payment_currency) {
+            return toast.warn(errors.payment_currency.message);
+        } else if (errors.vacancy_modality) {
+            return toast.warn(errors.vacancy_modality.message);
+        } else if (errors.work_regime) {
+            return toast.warn(errors.work_regime.message);
+        } else if (errors.place) {
+            return toast.warn(errors.place.message);
+        }
+    }
 
 	const onSubmit: SubmitHandler<Job> = async (data) => {
-		const formattedData = {
-			...data,
-			initial_salary: Number(data.initial_salary),
-			current_salary: Number(data.current_salary),
-		};
-
 		try {
+			const formattedData = {
+				...data,
+				initial_salary: Number(data.initial_salary),
+				current_salary: Number(data.current_salary),
+			};
+
 			// Busca as vagas existentes na API
 			const existingJobs = await jobService.fetch();
 
@@ -292,6 +297,7 @@ export default function JobForm({
 	useEffect(() => {
 		if (editingJob) {
 			console.log("editingJob =>", editingJob);
+			setOriginalValues(editingJob);
 			setValue("id", editingJob.id);
 			setValue("company_name", editingJob.company_name);
 			setValue("position", editingJob.position);
@@ -306,14 +312,27 @@ export default function JobForm({
 		}
 	}, [editingJob, setValue]);
 
+	// Adicione um novo useEffect para verificar mudanças
+	useEffect(() => {
+        const subscription = watch((value) => {
+            if (editingJob && originalValues) {
+                const hasAnyChange = Object.keys(value).some((key) => {
+                    if (!value[key as keyof Job]) return false;
+                    return value[key as keyof Job] !== originalValues[key as keyof Job];
+                });
+                setHasChanges(hasAnyChange);
+            }
+        });
+
+		return () => subscription.unsubscribe();
+	}, [watch, editingJob, originalValues]);
+
 	return (
 		<div
 			className={`min-w-80 p-4 sm:w-full ${
 				isInModal ? "lg:w-full" : "lg:w-3/4 xl:w-1/2"
 			} h-auto sm:h-full bg-gray-100 rounded-lg shadow-md drop-shadow-sm`}>
-			<form
-				onSubmit={handleSubmit(onSubmit, showErrorAlerts)}
-		>
+			<form onSubmit={handleSubmit(onSubmit, showErrorAlerts)}>
 				{/* Field for choosing the company name */}
 				<div className="mb-4 flex flex-col gap-2">
 					<Label
@@ -667,7 +686,7 @@ export default function JobForm({
 																field.onChange(
 																	currentValue
 																);
-																
+
 																setOpen(false);
 															}}>
 															{stateBr.label}
@@ -823,9 +842,11 @@ export default function JobForm({
 				<div className="flex justify-center">
 					<Button
 						type="submit"
-						className="focus-visible:ring-blue-400 focus-visible:ring-4"
+						className={`focus-visible:ring-blue-400 focus-visible:ring-4 ${
+                            editingJob && !hasChanges ? "cursor-not-allowed" : ""
+                          }`}
 						tabIndex={0}
-						>
+						disabled={editingJob ? !hasChanges : false}>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="24"

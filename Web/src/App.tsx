@@ -45,6 +45,7 @@ export default function App() {
 
 			await loadJobs();
 			setIsDialogOpen(false);
+            setJobEditionId(null);
 		} catch (error) {
 			notify.error(error as Error);
 		}
@@ -104,7 +105,12 @@ export default function App() {
 
 			<Dialog
 				open={isDialogOpen}
-				onOpenChange={setIsDialogOpen}>
+				onOpenChange={(open) => {
+                    setIsDialogOpen(open);
+                    if (!open) {
+                        setJobEditionId(null);
+                    }
+                }}>
 				<DialogContent>
 					<DialogHeader>
 						<DialogTitle className="text-center">
