@@ -34,7 +34,7 @@
   </g>
 
   <!-- Texto "Track Job" com estilo moderno -->
-  <text x="70" y="38" font-family="Arial, sans-serif" font-weight="bold" font-size="24">
+  <text x="70" y="38" font-family="font-roboto-flex, sans-serif" font-weight="bold" font-size="24">
     <tspan fill="#2D3748">Track</tspan>
     <tspan fill="#4666F6" dx="5">Job</tspan>
   </text>
