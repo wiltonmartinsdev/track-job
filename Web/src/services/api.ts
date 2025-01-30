@@ -1,5 +1,5 @@
 import axios from "axios";
 
 export const api = axios.create({
-	baseURL: "http://localhost:3333",
+	baseURL: "https://vercel.com/wilton-lira-martins-projects/track-job-vniu-api/Fr2AqSo5zrVrjhzjTgupQ1PLC3cc",
 });
