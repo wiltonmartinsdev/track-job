@@ -2,14 +2,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import EmailIcon from "@/assets/email-icon.svg";
 import LoginIcon from "@/assets/login-icon.svg";
+import Logo from "@/assets/logo.svg";
 import OpenPasswordIcon from "@/assets/open-password-icon.svg";
 
 export function SignIn() {
 	return (
 		<main className="bg-blue-600 min-h-screen flex items-center justify-center overflow-hidden">
 			<form className="bg-white p-8 rounded-lg shadow-lg">
-				<h1 className="text-3xl font-bold text-center">Track Job</h1>
-				<h3 className="text-gray-500">
+				<img
+					src={Logo}
+					alt="Logomarca da aplicação"
+				/>
+				<h3 className="text-gray-500 font-medium">
 					Faça login para acessar sua conta
 				</h3>
 
@@ -58,10 +62,10 @@ export function SignIn() {
 						</button>
 					</div>
 
-					<p className="text-center text-gray-500">
-						Não tem uma conta?{" "}
+					<p className="text-center text-gray-500 font-bold">
+						Não possui uma conta?{" "}
 						<span className="text-blue-600 font-bold">
-							Cadastra-se
+							Cadastre-se
 						</span>
 					</p>
 				</div>
