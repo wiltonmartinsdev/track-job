@@ -6,12 +6,12 @@ import {
 } from "@/components/ui/dialog";
 import { useState, useEffect } from "react";
 
-import JobForm, { Job } from "./components/JobForm";
-import JobList from "./components/JobList";
-import { jobService } from "./services/jobServices";
-import { notify } from "./utils/notifications";
+import JobForm, { Job } from "../../components/JobForm";
+import JobList from "../../components/JobList";
+import { jobService } from "../../services/jobServices";
+import { notify } from "../../utils/notifications";
 
-export default function App() {
+export default function Home() {
 	const [jobs, setJobs] = useState<Job[]>([]);
 	const [jobEditionId, setJobEditionId] = useState<string | null>(null);
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -45,7 +45,7 @@ export default function App() {
 
 			await loadJobs();
 			setIsDialogOpen(false);
-            setJobEditionId(null);
+			setJobEditionId(null);
 		} catch (error) {
 			notify.error(error as Error);
 		}
@@ -106,11 +106,11 @@ export default function App() {
 			<Dialog
 				open={isDialogOpen}
 				onOpenChange={(open) => {
-                    setIsDialogOpen(open);
-                    if (!open) {
-                        setJobEditionId(null);
-                    }
-                }}>
+					setIsDialogOpen(open);
+					if (!open) {
+						setJobEditionId(null);
+					}
+				}}>
 				<DialogContent>
 					<DialogHeader>
 						<DialogTitle className="text-center">
@@ -127,4 +127,3 @@ export default function App() {
 		</div>
 	);
 }
-  
