@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import EmailIcon from "@/assets/email-icon.svg";
 import LoginIcon from "@/assets/login-icon.svg";
-import PasswordIcon from "@/assets/password-icon.svg";
+import OpenPasswordIcon from "@/assets/open-password-icon.svg";
 
 export function SignIn() {
 	return (
@@ -34,7 +34,7 @@ export function SignIn() {
 						<Label className="block text-gray-700">Senha</Label>
 						<div className="relative">
 							<img
-								src={PasswordIcon}
+								src={OpenPasswordIcon}
 								alt="Ícone de Senha"
 								className="absolute left-2 top-2"
 							/>
