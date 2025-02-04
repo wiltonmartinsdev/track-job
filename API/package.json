@@ -10,8 +10,7 @@
 		"build": "tsup --out-dir build",
 		"start": "node build/server.js",
 		"knex": "node --import tsx ./node_modules/.bin/knex",
-		"test": "echo \"Error: no test specified\" && exit 1",
-        "vercel-build":"npx prisma migrate deploy"
+		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"keywords": [],
 	"author": "",
