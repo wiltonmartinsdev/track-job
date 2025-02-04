@@ -5,6 +5,7 @@ import ClosedPasswordIcon from "@/assets/closed-password-icon.svg";
 import EmailIcon from "@/assets/email-icon.svg";
 import Logo from "@/assets/logo.svg";
 import UserNameIcon from "@/assets/user-name-icon.svg";
+import { Link } from "react-router-dom";
 
 export function SignUp() {
 	return (
@@ -86,7 +87,7 @@ export function SignUp() {
 					<p className="text-center text-gray-500 font-bold">
 						Já possui uma conta?{" "}
 						<span className="text-blue-600 font-bold">
-							Faça login
+							<Link to="/">Faça login</Link>
 						</span>
 					</p>
 				</div>

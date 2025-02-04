@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import EmailIcon from "@/assets/email-icon.svg";
@@ -65,7 +67,7 @@ export function SignIn() {
 					<p className="text-center text-gray-500 font-bold">
 						Não possui uma conta?{" "}
 						<span className="text-blue-600 font-bold">
-							Cadastre-se
+							<Link to="/sign-up">Cadastre-se</Link>
 						</span>
 					</p>
 				</div>
