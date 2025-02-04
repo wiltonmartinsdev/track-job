@@ -27,7 +27,7 @@ export function SignUp() {
 							<img
 								src={UserNameIcon}
 								alt="Ícone de nome do usuário"
-								className="absolute left-2 top-3"
+								className="absolute left-[9px] top-3"
 							/>
 
 							<Input
