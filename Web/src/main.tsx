@@ -6,6 +6,7 @@ import { ToastContainer } from "react-toastify";
 import AppRoutes from "./routes/AppRoutes";
 
 import "react-toastify/dist/ReactToastify.css";
+import "animate.css";
 import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
