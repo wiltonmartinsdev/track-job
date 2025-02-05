@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import EmailIcon from "@/assets/email-icon.svg";
 import LoginIcon from "@/assets/login-icon.svg";
 import Logo from "@/assets/logo.svg";
@@ -10,7 +11,7 @@ import OpenPasswordIcon from "@/assets/open-password-icon.svg";
 export function SignIn() {
 	return (
 		<main className="bg-blue-600 min-h-screen flex items-center justify-center overflow-hidden">
-			<form className="bg-white p-8 rounded-lg shadow-lg sm:w-3/5 lg:w-[500px]">
+			<form className="bg-white p-8 rounded-lg shadow-2xl sm:w-3/5 lg:w-[500px]">
 				<img
 					src={Logo}
 					alt="Logomarca da aplicação"
@@ -53,20 +54,20 @@ export function SignIn() {
 						</div>
 					</div>
 					<div className="mt-4">
-						<button
+						<Button
 							type="submit"
-							className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center gap-2">
+							className="w-full">
 							<img
 								src={LoginIcon}
 								alt="Ícone de login"
 							/>
 							Entrar
-						</button>
+						</Button>
 					</div>
 
 					<p className="text-center text-gray-500 font-bold">
 						Não possui uma conta?{" "}
-						<span className="text-blue-600 font-bold">
+						<span className="text-blue-600 font-bold hover:scale-105 transition duration-300 inline-block">
 							<Link to="/sign-up">Cadastre-se</Link>
 						</span>
 					</p>
