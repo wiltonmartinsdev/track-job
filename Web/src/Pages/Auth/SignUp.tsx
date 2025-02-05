@@ -34,7 +34,7 @@ export function SignUp() {
 							<Input
 								type="text"
 								className="mt-1 px-8 block w-full rounded-md border-gray-300"
-								placeholder="Seu nome"
+								placeholder="Seu nome completo"
 							/>
 						</div>
 					</div>
@@ -49,7 +49,7 @@ export function SignUp() {
 							/>
 
 							<Input
-								type="password"
+								type="email"
 								className="mt-1 px-9 block w-full rounded-md border-gray-300"
 								placeholder="Seu e-mail"
 							/>
