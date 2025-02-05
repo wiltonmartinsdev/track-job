@@ -49,6 +49,11 @@ type SignUpFormValues = z.infer<typeof SignUpValidationFormSchema>;
 export function SignUp() {
 	const { handleSubmit, reset, control } = useForm<SignUpFormValues>({
 		resolver: zodResolver(SignUpValidationFormSchema),
+        defaultValues:{
+            name: "",
+            email: "",
+            password: ""
+        }
 	});
 
 	function showErrorAlerts(errors: FieldErrors<SignUpFormValues>) {
@@ -64,6 +69,7 @@ export function SignUp() {
 	function onSubmit(data: SignUpFormValues) {
 
 		console.log(data);
+        reset()
 	}
 
 	return (
