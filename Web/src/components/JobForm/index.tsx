@@ -208,7 +208,6 @@ export default function JobForm({
 }: JobFormProps) {
 	const [open, setOpen] = useState(false);
 	const [hasChanges, setHasChanges] = useState(false);
-	// Guarde os valores originais
 	const [originalValues, setOriginalValues] = useState<Job | null>(null);
 
 	const { handleSubmit, reset, setValue, control, watch } = useForm<Job>({
