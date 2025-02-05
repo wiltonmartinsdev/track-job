@@ -10,12 +10,12 @@ import OpenPasswordIcon from "@/assets/open-password-icon.svg";
 export function SignIn() {
 	return (
 		<main className="bg-blue-600 min-h-screen flex items-center justify-center overflow-hidden">
-			<form className="bg-white p-8 rounded-lg shadow-lg">
+			<form className="bg-white p-8 rounded-lg shadow-lg sm:w-3/5 lg:w-[500px]">
 				<img
 					src={Logo}
 					alt="Logomarca da aplicação"
 				/>
-				<h3 className="text-gray-500 font-medium">
+				<h3 className="text-gray-500 text-center font-medium">
 					Faça login para acessar sua conta
 				</h3>
 

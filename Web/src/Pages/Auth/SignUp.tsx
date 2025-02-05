@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import AddUserIcon from "@/assets/add-user-icon.svg";
@@ -5,18 +7,17 @@ import ClosedPasswordIcon from "@/assets/closed-password-icon.svg";
 import EmailIcon from "@/assets/email-icon.svg";
 import Logo from "@/assets/logo.svg";
 import UserNameIcon from "@/assets/user-name-icon.svg";
-import { Link } from "react-router-dom";
 
 export function SignUp() {
 	return (
 		<main className="bg-blue-600 min-h-screen flex items-center justify-center">
-			<form className="bg-white p-8 rounded-lg shadow-lg">
+			<form className="bg-white p-8 rounded-lg shadow-lg sm:w-3/5 lg:w-[500px]">
 				<img
 					src={Logo}
 					alt="Logomarca da aplicação"
 				/>
 
-				<h3 className="text-gray-500 font-medium">
+				<h3 className="text-gray-500 text-center font-medium">
 					Cadastre-se para acessar sua conta
 				</h3>
 
