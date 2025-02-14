@@ -65,7 +65,7 @@ export default class JobController {
 			});
 
 			response.status(201).json({
-				message: "Job created successfully",
+				message: "Job created successfully", id:request.user?.id 
 			});
 		} catch (error) {
 			next(error);

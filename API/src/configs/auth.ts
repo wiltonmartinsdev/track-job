@@ -1,19 +1,19 @@
 import { SignOptions } from "jsonwebtoken";
 
+import { env } from "../../env";
+
 interface AuthConfig {
 	jwt: {
 		secret: string;
 
-		// Tipo alinhado com a biblioteca jsonwebtoken
 		expiresIn: SignOptions["expiresIn"];
 	};
 }
 
 export const authConfig: AuthConfig = {
 	jwt: {
-		secret: process.env.AUTH_SECRET || "default",
+		secret: env.JWT_SECRET,
 
-		// Valor válido (string no formato esperado pelo JWT)
 		expiresIn: "1d",
 	},
 };
