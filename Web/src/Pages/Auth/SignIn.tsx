@@ -1,5 +1,5 @@
 import { Controller, FieldErrors, useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
@@ -7,6 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signInRequest } from "@/api/sign-in";
+import { useMutation } from "@tanstack/react-query";
+import { useAuth } from "@/contexts/auth";
 import EmailIcon from "@/assets/email-icon.svg";
 import LoginIcon from "@/assets/login-icon.svg";
 import Logo from "@/assets/logo.svg";
@@ -37,13 +40,34 @@ const SignInValidationFormSchema = z.object({
 
 type SignInFormValues = z.infer<typeof SignInValidationFormSchema>;
 
+interface AuthResponse {
+	token: string;
+	user: {
+		id: string;
+		name: string;
+		email: string;
+	};
+}
+
 export function SignIn() {
+	const { signIn } = useAuth();
+
+	const navigate = useNavigate()
+
 	const { handleSubmit, reset, control } = useForm<SignInFormValues>({
 		resolver: zodResolver(SignInValidationFormSchema),
-        defaultValues:{
-            email: "",
-            password: ""
-        }
+		defaultValues: {
+			email: "",
+			password: "",
+		},
+	});
+
+	const { mutateAsync: authenticate } = useMutation<
+		AuthResponse,
+		Error,
+		SignInFormValues
+	>({
+		mutationFn: signInRequest,
 	});
 
 	function showErrorAlerts(errors: FieldErrors<SignInFormValues>) {
@@ -54,10 +78,25 @@ export function SignIn() {
 		}
 	}
 
-	function onSubmit(data: SignInFormValues) {
+	async function onSubmit(data: SignInFormValues) {
+		try {
+			const response = await authenticate({
+				email: data.email,
+				password: data.password,
+			});
+			signIn(response.token, response.user);
 
-		console.log(data);
-        reset();
+            navigate("/job")
+
+			console.log(data);
+			reset();
+		} catch (error) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+              } else {
+                toast.error('Ocorreu um erro ao fazer login');
+              }
+		}
 	}
 
 	return (
@@ -65,9 +104,7 @@ export function SignIn() {
 			<form
 				className="bg-white p-8 rounded-lg shadow-2xl w-10/12 sm:w-3/5 lg:w-[500px] animate__animated animate__backInRight"
 				onSubmit={handleSubmit(onSubmit, showErrorAlerts)} // Desabilita a validação nativa do HTML5
-				noValidate
-                
-                >
+				noValidate>
 				<img
 					src={Logo}
 					alt="Logomarca da aplicação"

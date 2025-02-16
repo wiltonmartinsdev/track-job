@@ -1,12 +1,14 @@
 import { Controller, FieldErrors, useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
+import { useMutation } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { signUpRequest } from "@/api/sign-up";
 import AddUserIcon from "@/assets/add-user-icon.svg";
 import ClosedPasswordIcon from "@/assets/closed-password-icon.svg";
 import EmailIcon from "@/assets/email-icon.svg";
@@ -38,22 +40,33 @@ const SignUpValidationFormSchema = z.object({
 			"Ops! Parece que você adicionou um endereço inválido! Por favor, insira um e-mail válido."
 		),
 	password: z
-		.string({required_error: "Ops! Parece que você esqueceu de criar sua senha. Por favor, preencha esse campo para prosseguir com o cadastro."})
+		.string({
+			required_error:
+				"Ops! Parece que você esqueceu de criar sua senha. Por favor, preencha esse campo para prosseguir com o cadastro.",
+		})
 		.trim()
-		.min(8, "Ops! Sua senha deve conter no mínimo 8 caracteres. Escolha uma senha mais segura.",
+		.min(
+			8,
+			"Ops! Sua senha deve conter no mínimo 8 caracteres. Escolha uma senha mais segura."
 		),
 });
 
 type SignUpFormValues = z.infer<typeof SignUpValidationFormSchema>;
 
 export function SignUp() {
+    const navigate = useNavigate()
+
 	const { handleSubmit, reset, control } = useForm<SignUpFormValues>({
 		resolver: zodResolver(SignUpValidationFormSchema),
-        defaultValues:{
-            name: "",
-            email: "",
-            password: ""
-        }
+		defaultValues: {
+			name: "",
+			email: "",
+			password: "",
+		},
+	});
+
+	const { mutateAsync: authenticate } = useMutation({
+		mutationFn: signUpRequest,
 	});
 
 	function showErrorAlerts(errors: FieldErrors<SignUpFormValues>) {
@@ -66,10 +79,26 @@ export function SignUp() {
 		}
 	}
 
-	function onSubmit(data: SignUpFormValues) {
+	async function onSubmit(data: SignUpFormValues) {
+		try {
+			await authenticate({
+				name: data.name,
+				email: data.email,
+				password: data.password,
+			});
 
-		console.log(data);
-        reset()
+
+			console.log(data);
+			reset();
+
+			navigate("/")
+		} catch (error) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+            } else {
+                toast.error('Ocorreu um erro ao criar a conta');
+            }
+		}
 	}
 
 	return (
