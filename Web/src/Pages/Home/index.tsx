@@ -6,6 +6,10 @@ import {
 } from "@/components/ui/dialog";
 import { useState, useEffect } from "react";
 
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/auth";
+import LogoutIcon from "@/assets/logout-icon.svg";
+
 import JobForm, { Job } from "../../components/JobForm";
 import JobList from "../../components/JobList";
 import { jobService } from "../../services/jobServices";
@@ -15,6 +19,8 @@ export default function Home() {
 	const [jobs, setJobs] = useState<Job[]>([]);
 	const [jobEditionId, setJobEditionId] = useState<string | null>(null);
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+	const { signOut } = useAuth();
 
 	async function loadJobs() {
 		try {
@@ -80,6 +86,16 @@ export default function Home() {
 	return (
 		<div className="min-h-screen flex flex-col">
 			<header className="bg-blue-600 text-white text-center p-4 mb-10 sm:m-0">
+				<div className="flex justify-end ">
+					<Button onClick={signOut} className="hover:scale-125 transition duration-300">
+						<img
+							src={LogoutIcon}
+							alt="Ícone de logout"
+						/>
+						Sair
+					</Button>
+				</div>
+
 				<h1 className="font-roboto-flex font-black text-2xl">
 					Track Job
 				</h1>

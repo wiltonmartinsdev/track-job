@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signInRequest } from "@/api/sign-in";
+import { signInRequest } from "@/api/signInRequest";
 import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/auth";
 import EmailIcon from "@/assets/email-icon.svg";
@@ -52,7 +52,7 @@ interface AuthResponse {
 export function SignIn() {
 	const { signIn } = useAuth();
 
-	const navigate = useNavigate()
+	const navigate = useNavigate();
 
 	const { handleSubmit, reset, control } = useForm<SignInFormValues>({
 		resolver: zodResolver(SignInValidationFormSchema),
@@ -86,16 +86,15 @@ export function SignIn() {
 			});
 			signIn(response.token, response.user);
 
-            navigate("/job")
+			navigate("/job");
 
-			console.log(data);
 			reset();
 		} catch (error) {
-            if (error instanceof Error) {
-                toast.error(error.message);
-              } else {
-                toast.error('Ocorreu um erro ao fazer login');
-              }
+			if (error instanceof Error) {
+				toast.error(error.message);
+			} else {
+				toast.error("Ocorreu um erro ao fazer login");
+			}
 		}
 	}
 

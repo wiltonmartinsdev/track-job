@@ -6,7 +6,7 @@ import { ToastContainer } from "react-toastify";
 import { QueryClientProvider } from "@tanstack/react-query";
 
 import { AuthProvider } from "./contexts/auth";
-import { queryClient } from "./lib/react-query";
+import { queryClient } from "./lib/reactQuery";
 import { Routes } from "./routes";
 
 import "react-toastify/dist/ReactToastify.css";

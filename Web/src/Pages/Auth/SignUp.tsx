@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { signUpRequest } from "@/api/sign-up";
+import { signUpRequest } from "@/api/signUpRequest";
 import AddUserIcon from "@/assets/add-user-icon.svg";
 import ClosedPasswordIcon from "@/assets/closed-password-icon.svg";
 import EmailIcon from "@/assets/email-icon.svg";
@@ -54,7 +54,7 @@ const SignUpValidationFormSchema = z.object({
 type SignUpFormValues = z.infer<typeof SignUpValidationFormSchema>;
 
 export function SignUp() {
-    const navigate = useNavigate()
+	const navigate = useNavigate();
 
 	const { handleSubmit, reset, control } = useForm<SignUpFormValues>({
 		resolver: zodResolver(SignUpValidationFormSchema),
@@ -86,18 +86,15 @@ export function SignUp() {
 				email: data.email,
 				password: data.password,
 			});
-
-
-			console.log(data);
 			reset();
 
-			navigate("/")
+			navigate("/");
 		} catch (error) {
-            if (error instanceof Error) {
-                toast.error(error.message);
-            } else {
-                toast.error('Ocorreu um erro ao criar a conta');
-            }
+			if (error instanceof Error) {
+				toast.error(error.message);
+			} else {
+				toast.error("Ocorreu um erro ao criar a conta");
+			}
 		}
 	}
 
