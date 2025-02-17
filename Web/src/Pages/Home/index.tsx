@@ -86,7 +86,7 @@ export default function Home() {
 
 	return (
 		<div className="min-h-screen flex flex-col">
-			<header className="flex justify-between items-center bg-blue-600 text-white p-4 mb-10 sm:m-0">
+			<header className="flex justify-between items-center bg-blue-600 text-white p-4 mb-10">
 				<Logo
 					className="w-36 sm:w-32 lg:w-40 xl:w-52 "
 					style={{ "--job-color": "#FFFFFF" } as React.CSSProperties}
