@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth";
+import Logo from "@/assets/logo.svg?react";
 import LogoutIcon from "@/assets/logout-icon.svg";
 
 import JobForm, { Job } from "../../components/JobForm";
@@ -85,9 +86,29 @@ export default function Home() {
 
 	return (
 		<div className="min-h-screen flex flex-col">
-			<header className="bg-blue-600 text-white text-center p-4 mb-10 sm:m-0">
-				<div className="flex justify-end ">
-					<Button onClick={signOut} className="hover:scale-125 transition duration-300">
+			<header className="flex justify-between items-center bg-blue-600 text-white p-4 mb-10 sm:m-0">
+				<Logo
+					className="w-36 sm:w-32 lg:w-40 xl:w-52 "
+					style={{ "--job-color": "#FFFFFF" } as React.CSSProperties}
+				/>
+
+				<p className="font-roboto-flex font-black text-center sm:hidden">
+					Total: {jobs.length}
+				</p>
+
+				<div className="hidden sm:block">
+					<p className="font-roboto-flex font-black text-xl">
+						Acompanhamento de Candidaturas
+					</p>
+					<p className="font-roboto-flex font-black text-center">
+						Total: {jobs.length}
+					</p>
+				</div>
+
+				<div className="">
+					<Button
+						onClick={signOut}
+						className="hover:scale-125 transition duration-300">
 						<img
 							src={LogoutIcon}
 							alt="Ícone de logout"
@@ -95,16 +116,6 @@ export default function Home() {
 						Sair
 					</Button>
 				</div>
-
-				<h1 className="font-roboto-flex font-black text-2xl">
-					Track Job
-				</h1>
-				<p className="font-roboto-flex font-black text-xl">
-					Acompanhamento de Candidaturas
-				</p>
-				<p className="font-roboto-flex font-black">
-					Total: {jobs.length}
-				</p>
 			</header>
 
 			<main className="min-w-80 flex justify-center items-center lg:mt-10 sm:px-24">

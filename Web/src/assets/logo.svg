@@ -34,6 +34,6 @@
   <!-- Texto "Track Job" com estilo moderno -->
   <text x="68" y="40" font-family="font-roboto-flex, sans-serif" font-weight="900" font-size="26">
     <tspan fill="#2D3748">Track</tspan>
-    <tspan fill="#4666F6">Job</tspan>
+    <tspan fill="var(--job-color, #4666F6)">Job</tspan>
   </text>
 </svg>
