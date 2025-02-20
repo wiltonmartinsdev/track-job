@@ -9,4 +9,4 @@ const jobController = new JobController();
 jobRoutes.post("/", ensureAuthenticated, jobController.create);
 jobRoutes.get("/", ensureAuthenticated, jobController.index);
 jobRoutes.put("/:id", ensureAuthenticated, jobController.update);
-jobRoutes.delete("/:id", ensureAuthenticated, jobController.delete);
+// jobRoutes.delete("/:id", ensureAuthenticated, jobController.delete);
