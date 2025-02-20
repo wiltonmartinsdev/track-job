@@ -164,30 +164,37 @@ export default class JobController {
 		}
 	}
 
-	// async delete(request: Request, response: Response, next: NextFunction) {
-	// 	try {
-	// 		const id = z
-	// 			.string()
-	// 			.transform((value) => Number(value))
-	// 			.refine((value) => !isNaN(value), {
-	// 				message: "Id must be a number",
-	// 			})
-	// 			.parse(request.params.id);
+	async delete(request: Request, response: Response, next: NextFunction) {
+		try {
+			const id = z.string().parse(request.params.id);
 
-	// 		const job = await knex<jobRepository>("jobs")
-	// 			.select()
-	// 			.where({ id })
-	// 			.first();
+			if (!request.user?.id) {
+				throw new AppError("Usuário não autenticado", 401);
+			}
 
-	// 		if (!job) {
-	// 			throw new AppError("Job not found", 404);
-	// 		}
+			const job = await prisma.job.findUnique({
+				where: { id },
+			});
 
-	// 		await knex<jobRepository>("jobs").delete().where({ id });
+			if (!job) {
+				throw new AppError("Vaga não encontrada", 404);
+			}
 
-	// 		response.json({ message: "Job deleted successfully" });
-	// 	} catch (error) {
-	// 		next(error);
-	// 	}
-	// }
+			// Verifica se a vaga pertence ao usuário autenticado
+			if (job.user_id !== request.user.id) {
+				throw new AppError(
+					"Você não tem permissão para excluir esta vaga",
+					403
+				);
+			}
+
+			await prisma.job.delete({
+				where: { id },
+			});
+
+			response.json({ message: "Vaga excluída com sucesso" });
+		} catch (error) {
+			next(error);
+		}
+	}
 }
