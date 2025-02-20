@@ -6,11 +6,53 @@ import { prisma } from "../database/prisma";
 import AppError from "../utils/AppError";
 
 export default class JobController {
+	async create(request: Request, response: Response, next: NextFunction) {
+		try {
+			const bodySchema = z.object({
+				company_name: z.string().trim().min(4),
+				position: z.string().trim().min(8),
+				seniority_level: z.string().trim().min(5),
+				payment_currency: z.string().trim().min(4),
+				initial_salary: z.number().nonnegative(),
+				current_salary: z.number().nonnegative(),
+				vacancy_modality: z.string().trim().min(6),
+				work_regime: z.string().trim().min(2),
+				place: z.string().trim().min(4),
+			});
+
+			if (!request.user?.id) {
+				throw new AppError("Usuário não autenticado", 401);
+			}
+
+			await prisma.job.create({
+				data: {
+					...bodySchema.parse(request.body),
+					status: "Enviada",
+					process_phase: "Envio do Currículo",
+					user_id: request.user.id,
+				},
+			});
+
+			response.status(201).json({
+				message: "Job created successfully",
+				id: request.user?.id,
+			});
+		} catch (error) {
+			next(error);
+		}
+	}
+
 	async index(request: Request, response: Response, next: NextFunction) {
 		try {
 			const { company_name } = request.query;
+
+			if (!request.user?.id) {
+				throw new AppError("Usuário não autenticado", 401);
+			}
+
 			const jobs = await prisma.job.findMany({
 				where: {
+					user_id: request.user.id,
 					company_name: {
 						contains: (company_name as string) || "",
 						mode: "insensitive",
@@ -37,36 +79,6 @@ export default class JobController {
 			}));
 
 			response.json(formattedJobs);
-		} catch (error) {
-			next(error);
-		}
-	}
-
-	async create(request: Request, response: Response, next: NextFunction) {
-		try {
-			const bodySchema = z.object({
-				company_name: z.string().trim().min(4),
-				position: z.string().trim().min(8),
-				seniority_level: z.string().trim().min(5),
-				payment_currency: z.string().trim().min(4),
-				initial_salary: z.number().nonnegative(),
-				current_salary: z.number().nonnegative(),
-				vacancy_modality: z.string().trim().min(6),
-				work_regime: z.string().trim().min(2),
-				place: z.string().trim().min(4),
-			});
-
-			await prisma.job.create({
-				data: {
-					...bodySchema.parse(request.body),
-					status: "Enviada",
-					process_phase: "Envio do Currículo",
-				},
-			});
-
-			response.status(201).json({
-				message: "Job created successfully", id:request.user?.id 
-			});
 		} catch (error) {
 			next(error);
 		}

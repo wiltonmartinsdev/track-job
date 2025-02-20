@@ -7,3 +7,8 @@ services:
             POSTGRESQL_USER: postgres
             POSTGRESQL_PASSWORD: postgres
             POSTGRESQL_DB: track-job
+        volumes:
+            - postgres_data:/bitnami/postgresql
+volumes:
+    postgres_data:
+        driver: local
