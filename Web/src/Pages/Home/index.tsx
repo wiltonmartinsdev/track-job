@@ -14,6 +14,7 @@ import { useState, useEffect } from "react";
 
 import { useAuth } from "@/contexts/auth";
 import { HamburgerMenu } from "@/components/HamburgerMenu";
+import { Footer } from "@/components/Footer";
 import Logo from "@/assets/logo.svg?react";
 import LogoutIcon from "@/assets/logout-icon.svg";
 import UserIcon from "@/assets/user-icon.svg";
@@ -131,7 +132,8 @@ export default function Home() {
 							/>
 							<div className="flex flex-col">
 								<span className="text-left font-roboto-flex font-black italic">
-									Olá, {user?.name?.split(" ")[0].toUpperCase()}
+									Olá,{" "}
+									{user?.name?.split(" ")[0].toUpperCase()}
 								</span>
 							</div>
 						</DropdownMenuTrigger>
@@ -154,35 +156,37 @@ export default function Home() {
 				{!isDialogOpen && <JobForm onAdd={handleJobSubmission} />}
 			</main>
 
-			<footer className="sm:mx-auto sm:w-[85%] lg:w-[70%] xl:w-1/2">
+			<section className="sm:mx-auto sm:w-[85%] lg:w-[70%] xl:w-1/2">
 				<JobList
 					jobs={jobs}
 					onEditJob={handleEditJob}
 					onDeleteJob={handleDeleteJob}
 				/>
-			</footer>
 
-			<Dialog
-				open={isDialogOpen}
-				onOpenChange={(open) => {
-					setIsDialogOpen(open);
-					if (!open) {
-						setJobEditionId(null);
-					}
-				}}>
-				<DialogContent>
-					<DialogHeader>
-						<DialogTitle className="text-center">
-							Editar Candidatura
-						</DialogTitle>
-					</DialogHeader>
-					<JobForm
-						onAdd={handleJobSubmission}
-						editingJob={editingJob}
-						isInModal
-					/>
-				</DialogContent>
-			</Dialog>
+				<Dialog
+					open={isDialogOpen}
+					onOpenChange={(open) => {
+						setIsDialogOpen(open);
+						if (!open) {
+							setJobEditionId(null);
+						}
+					}}>
+					<DialogContent>
+						<DialogHeader>
+							<DialogTitle className="text-center">
+								Editar Candidatura
+							</DialogTitle>
+						</DialogHeader>
+						<JobForm
+							onAdd={handleJobSubmission}
+							editingJob={editingJob}
+							isInModal
+						/>
+					</DialogContent>
+				</Dialog>
+			</section>
+
+			<Footer />
 		</div>
 	);
 }
