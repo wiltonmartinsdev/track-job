@@ -32,6 +32,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
+import { useAuth } from "@/contexts/auth";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
@@ -88,6 +89,15 @@ export type Job = {
 	created_at: string;
 	updated_at: string;
 };
+
+interface APIError {
+	response?: {
+		status: number;
+		data?: {
+			message: string;
+		};
+	};
+}
 
 type JobFormProps = {
 	onAdd: (job: Job) => Promise<void>;
@@ -210,6 +220,8 @@ export default function JobForm({
 	const [hasChanges, setHasChanges] = useState(false);
 	const [originalValues, setOriginalValues] = useState<Job | null>(null);
 
+	const { signOut } = useAuth();
+
 	const { handleSubmit, reset, setValue, control, watch } = useForm<Job>({
 		resolver: zodResolver(jobFormSchema),
 		defaultValues: editingJob || {
@@ -233,23 +245,23 @@ export default function JobForm({
 		name: "payment_currency",
 	});
 
-    function showErrorAlerts(errors: FieldErrors<Job>) {
-        if (errors.company_name) {
-            return toast.warn(errors.company_name.message);
-        } else if (errors.position) {
-            return toast.warn(errors.position.message);
-        } else if (errors.seniority_level) {
-            return toast.warn(errors.seniority_level.message);
-        } else if (errors.payment_currency) {
-            return toast.warn(errors.payment_currency.message);
-        } else if (errors.vacancy_modality) {
-            return toast.warn(errors.vacancy_modality.message);
-        } else if (errors.work_regime) {
-            return toast.warn(errors.work_regime.message);
-        } else if (errors.place) {
-            return toast.warn(errors.place.message);
-        }
-    }
+	function showErrorAlerts(errors: FieldErrors<Job>) {
+		if (errors.company_name) {
+			return toast.warn(errors.company_name.message);
+		} else if (errors.position) {
+			return toast.warn(errors.position.message);
+		} else if (errors.seniority_level) {
+			return toast.warn(errors.seniority_level.message);
+		} else if (errors.payment_currency) {
+			return toast.warn(errors.payment_currency.message);
+		} else if (errors.vacancy_modality) {
+			return toast.warn(errors.vacancy_modality.message);
+		} else if (errors.work_regime) {
+			return toast.warn(errors.work_regime.message);
+		} else if (errors.place) {
+			return toast.warn(errors.place.message);
+		}
+	}
 
 	const onSubmit: SubmitHandler<Job> = async (data) => {
 		try {
@@ -285,11 +297,39 @@ export default function JobForm({
 			await onAdd(formattedData);
 			reset();
 			setOpen(false);
-		} catch (error) {
+		} catch (error: unknown) {
 			console.error("Erro ao atualizar a vaga:", error);
-			toast.error(
-				"Ocorreu um erro ao atualizar a vaga. Tente novamente."
-			);
+
+			// Type guard para garantir que error é do tipo APIError
+			if (error && typeof error === "object" && "response" in error) {
+				const apiError = error as APIError;
+
+				if (apiError.response?.status === 401) {
+					const errorMessage = apiError.response?.data?.message;
+
+					if (errorMessage === "JWT token não informado!") {
+						toast.error(
+							"🔐 Você precisa fazer login para proteger seus dados, você será redirecionado ao login em 5 segundos...⏳"
+						);
+
+						return setTimeout(() => {
+							signOut();
+						}, 5000);
+					} else {
+						toast.error(
+							"🔐 Sua sessão expirou por inatividade. Para proteger seus dados, você será redirecionado ao login em 5 segundos...⏳"
+						);
+
+						return setTimeout(() => {
+							signOut();
+						}, 5000);
+					}
+				} else {
+					toast.error(
+						"Ocorreu um erro ao atualizar a vaga. Tente novamente."
+					);
+				}
+			}
 		}
 	};
 
@@ -313,15 +353,18 @@ export default function JobForm({
 
 	// Adicione um novo useEffect para verificar mudanças
 	useEffect(() => {
-        const subscription = watch((value) => {
-            if (editingJob && originalValues) {
-                const hasAnyChange = Object.keys(value).some((key) => {
-                    if (!value[key as keyof Job]) return false;
-                    return value[key as keyof Job] !== originalValues[key as keyof Job];
-                });
-                setHasChanges(hasAnyChange);
-            }
-        });
+		const subscription = watch((value) => {
+			if (editingJob && originalValues) {
+				const hasAnyChange = Object.keys(value).some((key) => {
+					if (!value[key as keyof Job]) return false;
+					return (
+						value[key as keyof Job] !==
+						originalValues[key as keyof Job]
+					);
+				});
+				setHasChanges(hasAnyChange);
+			}
+		});
 
 		return () => subscription.unsubscribe();
 	}, [watch, editingJob, originalValues]);
@@ -842,8 +885,10 @@ export default function JobForm({
 					<Button
 						type="submit"
 						className={`focus-visible:ring-blue-400 focus-visible:ring-4 ${
-                            editingJob && !hasChanges ? "cursor-not-allowed" : ""
-                          }`}
+							editingJob && !hasChanges
+								? "cursor-not-allowed"
+								: ""
+						}`}
 						tabIndex={0}
 						disabled={editingJob ? !hasChanges : false}>
 						<svg
