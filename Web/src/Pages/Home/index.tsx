@@ -93,7 +93,7 @@ export default function Home() {
 	}, []);
 
 	return (
-		<div className="min-h-screen flex flex-col">
+		<div className="min-h-screen flex flex-col pb-14">
 			<header className="sm:flex sm:justify-around sm:items-center bg-blue-600 py-4 text-white">
 				<div className="flex justify-around items-center">
 					<Logo
