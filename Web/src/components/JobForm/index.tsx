@@ -38,8 +38,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { jobService } from "@/services/jobServices";
-
 import { getCurrencySymbol } from "../../utils/currencyUtils";
 import { Input } from "../ui/input";
 
@@ -270,28 +268,6 @@ export default function JobForm({
 				initial_salary: Number(data.initial_salary),
 				current_salary: Number(data.current_salary),
 			};
-
-			// Busca as vagas existentes na API
-			const existingJobs = await jobService.fetch();
-
-			// Exclui a vaga atual da validação
-			const hasCurrentJob = existingJobs.filter(
-				(job: Job) =>
-					job.status === "Emprego atual" && job.id !== editingJob?.id
-			);
-
-			if (
-				hasCurrentJob.length >= 2 &&
-				formattedData.status === "Emprego atual"
-			) {
-				toast.error(
-					"Ops! Você só pode ter no máximo duas vagas com o status 'Emprego atual'."
-				);
-
-				// Restaura o status original no formulário
-				setValue("status", editingJob?.status || "Enviada");
-				return;
-			}
 
 			// Prosseguir com a atualização
 			await onAdd(formattedData);

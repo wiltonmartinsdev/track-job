@@ -48,7 +48,7 @@ export default function Home() {
 					jobs.map((j) => (j.id === jobEditionId ? updatedJob : j))
 				);
 				notify.success(
-					`Alterações na empresa ${job.company_name} realizadas com sucesso!`
+					`Alterações na empresa ${job.company_name} foram realizadas com sucesso!`
 				);
 			} else {
 				const newJob = await jobService.create(job);
