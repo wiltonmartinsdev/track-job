@@ -129,6 +129,7 @@ export default class JobController {
 				const count = await prisma.job.count({
 					where: {
 						status: "Emprego atual",
+                        user_id: request.user?.id,
 						NOT: { id },
 					},
 				});
