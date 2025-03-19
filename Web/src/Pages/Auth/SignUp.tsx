@@ -15,7 +15,7 @@ import EmailIcon from "@/assets/email-icon.svg";
 import Logo from "@/assets/logo.svg";
 import UserNameIcon from "@/assets/user-name-icon.svg";
 
-const SignUpValidationFormSchema = z.object({
+export const SignUpValidationFormSchema = z.object({
 	name: z
 		.string({
 			required_error:
@@ -51,7 +51,7 @@ const SignUpValidationFormSchema = z.object({
 		),
 });
 
-type SignUpFormValues = z.infer<typeof SignUpValidationFormSchema>;
+export type SignUpFormValues = z.infer<typeof SignUpValidationFormSchema>;
 
 export function SignUp() {
 	const navigate = useNavigate();
