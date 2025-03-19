@@ -4,10 +4,10 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { signUpRequest } from "@/api/signUpRequest";
+import { signInRequest } from "@/api/signInRequest";
 import userEvent from "@testing-library/user-event";
 
-import { SignUp } from "./SignUp";
+import { SignIn } from "./SignIn";
 
 // Mock the dependencies
 vi.mock("react-toastify", () => ({
@@ -18,10 +18,19 @@ vi.mock("react-toastify", () => ({
 	},
 }));
 
-vi.mock("@/api/signUpRequest", () => ({
-	signUpRequest: vi.fn(),
+vi.mock("@/api/signInRequest", () => ({
+	signInRequest: vi.fn(),
 }));
 
+// Mock useAuth hook
+const mockSignIn = vi.fn();
+vi.mock("@/contexts/auth", () => ({
+	useAuth: () => ({
+		signIn: mockSignIn,
+	}),
+}));
+
+// useNavigate Mock
 const mockNavigate = vi.fn();
 vi.mock("react-router-dom", async () => {
 	const actual = await vi.importActual("react-router-dom");
@@ -31,7 +40,7 @@ vi.mock("react-router-dom", async () => {
 	};
 });
 
-describe("SignUp Form Validation and Submission Tests", () => {
+describe("SignIn Form Validation and Authentication Tests", () => {
 	let queryClient: QueryClient;
 
 	beforeEach(() => {
@@ -45,55 +54,51 @@ describe("SignUp Form Validation and Submission Tests", () => {
 		vi.clearAllMocks();
 	});
 
-	const renderSignUp = () => {
+	const renderSignIn = () => {
 		return render(
 			<BrowserRouter>
 				<QueryClientProvider client={queryClient}>
-					<SignUp />
+					<SignIn />
 				</QueryClientProvider>
 			</BrowserRouter>
 		);
 	};
 
 	it("Should render the component correctly", () => {
-		renderSignUp();
+		renderSignIn();
 
 		expect(
-			screen.getByText("Cadastre-se para acessar sua conta")
-		).toBeInTheDocument();
-		expect(
-			screen.getByPlaceholderText("Seu nome completo")
+			screen.getByText("Faça login para acessar sua conta")
 		).toBeInTheDocument();
 		expect(screen.getByPlaceholderText("Seu e-mail")).toBeInTheDocument();
 		expect(screen.getByPlaceholderText("Sua senha")).toBeInTheDocument();
-		expect(screen.getByText("Criar sua conta")).toBeInTheDocument();
-		expect(screen.getByText("Já possui uma conta?")).toBeInTheDocument();
+		expect(screen.getByText("Entrar")).toBeInTheDocument();
+		expect(screen.getByText("Não possui uma conta?")).toBeInTheDocument();
+		expect(screen.getByText("Cadastre-se")).toBeInTheDocument();
 	});
 
-	it("Should show error when name is too short", async () => {
-		renderSignUp();
+	it("Should show error when email is too short", async () => {
+		renderSignIn();
 
-		const nameInput = screen.getByPlaceholderText("Seu nome completo");
-		const submitButton = screen.getByText("Criar sua conta");
+		const emailInput = screen.getByPlaceholderText("Seu e-mail");
+		const submitButton = screen.getByText("Entrar");
 
-		await userEvent.type(nameInput, "Ana");
+		await userEvent.type(emailInput, "a@b.c");
 		fireEvent.click(submitButton);
 
 		await waitFor(() => {
 			expect(toast.warn).toHaveBeenCalledWith(
-				"Ops! Para prosseguir com o cadastro o campo 'nome' deve conter no mínimo 4 caracteres."
+				"Ops! Para prosseguir com o login, o campo \"e-mail\" deve conter no mínimo 6 caracteres."
 			);
 		});
 	});
 
 	it("Should show error when email is invalid", async () => {
-		renderSignUp();
+		renderSignIn();
 
-		const nameInput = screen.getByPlaceholderText("Seu nome completo");
 		const emailInput = screen.getByPlaceholderText("Seu e-mail");
-		const submitButton = screen.getByText("Criar sua conta");
+		const submitButton = screen.getByText("Entrar");
 
-		await userEvent.type(nameInput, "Usuário Teste");
 		await userEvent.type(emailInput, "email-invalido");
 		fireEvent.click(submitButton);
 
@@ -105,70 +110,98 @@ describe("SignUp Form Validation and Submission Tests", () => {
 	});
 
 	it("Should show error when password is too short", async () => {
-		renderSignUp();
+		renderSignIn();
 
-		const nameInput = screen.getByPlaceholderText("Seu nome completo");
 		const emailInput = screen.getByPlaceholderText("Seu e-mail");
 		const passwordInput = screen.getByPlaceholderText("Sua senha");
-		const submitButton = screen.getByText("Criar sua conta");
+		const submitButton = screen.getByText("Entrar");
 
-		await userEvent.type(nameInput, "Usuário Teste");
 		await userEvent.type(emailInput, "usuario@teste.com");
 		await userEvent.type(passwordInput, "123");
 		fireEvent.click(submitButton);
 
 		await waitFor(() => {
 			expect(toast.warn).toHaveBeenCalledWith(
-				"Ops! Sua senha deve conter no mínimo 8 caracteres. Escolha uma senha mais segura."
+				"Ops! Sua senha deve conter no mínimo 8 caracteres."
 			);
 		});
 	});
 
-	it("Should call the API and redirect when the form is valid", async () => {
-		// Mock API Success Response
-		vi.mocked(signUpRequest).mockResolvedValueOnce({ success: true });
+	it("Should call the API, sign in and redirect when the form is valid", async () => {
+		// Mock API success response
+		const mockResponse = {
+			token: "fake-token",
+			user: {
+				id: "user-id",
+				name: "Usuário Teste",
+				email: "usuario@teste.com",
+			},
+		};
+		vi.mocked(signInRequest).mockResolvedValueOnce(mockResponse);
 
-		renderSignUp();
+		renderSignIn();
 
-		const nameInput = screen.getByPlaceholderText("Seu nome completo");
 		const emailInput = screen.getByPlaceholderText("Seu e-mail");
 		const passwordInput = screen.getByPlaceholderText("Sua senha");
-		const submitButton = screen.getByText("Criar sua conta");
+		const submitButton = screen.getByText("Entrar");
 
-		await userEvent.type(nameInput, "Usuário Teste");
 		await userEvent.type(emailInput, "usuario@teste.com");
 		await userEvent.type(passwordInput, "senha12345");
 		fireEvent.click(submitButton);
 
 		await waitFor(() => {
-			expect(signUpRequest).toHaveBeenCalledWith({
-				name: "Usuário Teste",
+			expect(signInRequest).toHaveBeenCalledWith({
 				email: "usuario@teste.com",
 				password: "senha12345",
 			});
-			expect(mockNavigate).toHaveBeenCalledWith("/");
+			
+			// Checks if the useAuth.signIn hook was called with the correct parameters
+			expect(mockSignIn).toHaveBeenCalledWith(
+				mockResponse.token,
+				mockResponse.user
+			);
+			
+			// Checks if the user was redirected to the correct page
+			expect(mockNavigate).toHaveBeenCalledWith("/job");
 		});
 	});
 
-	it("should show error when API returns error", async () => {
+	it("Should show error when API returns error", async () => {
 		// API Error Mock
-		const errorMessage = "E-mail já cadastrado";
-		vi.mocked(signUpRequest).mockRejectedValueOnce(new Error(errorMessage));
+		const errorMessage = "Credenciais inválidas";
+		vi.mocked(signInRequest).mockRejectedValueOnce(new Error(errorMessage));
 
-		renderSignUp();
+		renderSignIn();
 
-		const nameInput = screen.getByPlaceholderText("Seu nome completo");
 		const emailInput = screen.getByPlaceholderText("Seu e-mail");
 		const passwordInput = screen.getByPlaceholderText("Sua senha");
-		const submitButton = screen.getByText("Criar sua conta");
+		const submitButton = screen.getByText("Entrar");
 
-		await userEvent.type(nameInput, "Usuário Teste");
 		await userEvent.type(emailInput, "usuario@teste.com");
 		await userEvent.type(passwordInput, "senha12345");
 		fireEvent.click(submitButton);
 
 		await waitFor(() => {
 			expect(toast.error).toHaveBeenCalledWith(errorMessage);
+		});
+	});
+
+	it("Should show generic error when API throws non-Error object", async () => {
+		// Generic API Error Mock
+		vi.mocked(signInRequest).mockRejectedValueOnce("Erro não específico");
+
+		renderSignIn();
+
+		const emailInput = screen.getByPlaceholderText("Seu e-mail");
+		const passwordInput = screen.getByPlaceholderText("Sua senha");
+		const submitButton = screen.getByText("Entrar");
+
+		await userEvent.type(emailInput, "usuario@teste.com");
+		await userEvent.type(passwordInput, "senha12345");
+		fireEvent.click(submitButton);
+
+		await waitFor(() => {
+			expect(toast.error).toHaveBeenCalledWith("Ocorreu um erro ao fazer login");
 		});
 	});
 });
