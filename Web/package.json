@@ -8,7 +8,9 @@
 		"build": "tsc -b && vite build",
 		"lint": "eslint .",
 		"preview": "vite preview",
-		"test": "clear && vitest",
+		"test:SignIn": "clear && vitest src/Pages/Auth/SignIn.test.tsx",
+		"test:SignUp": "clear && vitest src/Pages/Auth/SignUp.test.tsx",
+		"test:JobForm": "clear && vitest src/components/JobForm/index.test.tsx",
 		"test:ui": "vitest --ui",
 		"test:coverage": "vitest run --coverage"
 	},

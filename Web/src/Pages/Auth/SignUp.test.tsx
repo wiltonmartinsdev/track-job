@@ -150,7 +150,7 @@ describe("SignUp Form Validation and Submission Tests", () => {
 		});
 	});
 
-	it("should show error when API returns error", async () => {
+	it("Should show error when API returns error", async () => {
 		// API Error Mock
 		const errorMessage = "E-mail já cadastrado";
 		vi.mocked(signUpRequest).mockRejectedValueOnce(new Error(errorMessage));

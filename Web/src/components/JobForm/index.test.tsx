@@ -25,7 +25,7 @@ vi.mock("@/contexts/auth", () => ({
 	}),
 }));
 
-describe("JobForm Component - Validation and Submission Tests", () => {
+describe("JobForm Component - Job Creation Tests (Validation and Submission Tests)", () => {
 	const mockOnAdd = vi.fn();
 
 	beforeEach(() => {
@@ -245,6 +245,203 @@ describe("JobForm Component - Validation and Submission Tests", () => {
 		await waitFor(() => {
 			expect(toast.error).toHaveBeenCalledWith(
 				"🔐 Você precisa fazer login para proteger seus dados, você será redirecionado ao login em 5 segundos...⏳"
+			);
+		});
+	});
+});
+
+describe("JobForm Component - Job Editing Tests (Uploading, Validation and Submission)", () => {
+	const mockOnAdd = vi.fn();
+	const mockEditingJob = {
+		id: "job123",
+		company_name: "Empresa Original",
+		position: "Desenvolvedor Front-end",
+		seniority_level: "Júnior",
+		payment_currency: "Real",
+		initial_salary: 3000,
+		current_salary: 3500,
+		status: "Em seleção",
+		process_phase: "Entrevista Técnica",
+		vacancy_modality: "Remota",
+		work_regime: "CLT",
+		place: "São Paulo",
+		created_at: "2023-01-01",
+		updated_at: "2023-01-01",
+	};
+
+	beforeEach(() => {
+		vi.clearAllMocks();
+	});
+
+	it("Should render the form with the vacancy data for editing", () => {
+		render(
+			<JobForm
+				onAdd={mockOnAdd}
+				editingJob={mockEditingJob}
+			/>
+		);
+
+		// Check if the fields are filled with the correct values
+		expect(
+			screen.getByDisplayValue("Empresa Original")
+		).toBeInTheDocument();
+		expect(screen.getByLabelText("Front-end")).toBeChecked();
+		expect(screen.getByLabelText("Júnior")).toBeChecked();
+		expect(screen.getByLabelText("R$ Real")).toBeChecked();
+		expect(screen.getByLabelText("Remota")).toBeChecked();
+		expect(screen.getByLabelText("CLT")).toBeChecked();
+
+		// Check if specific editing fields are present
+		expect(screen.getByText("Salário Inicial")).toBeInTheDocument();
+		expect(screen.getByText("Salário Atual")).toBeInTheDocument();
+		expect(screen.getByText("Status")).toBeInTheDocument();
+		expect(screen.getByText("Fase do Processo")).toBeInTheDocument();
+
+		// Check if the button has the correct text for editing
+		expect(screen.getByText("Salvar alterações")).toBeInTheDocument();
+	});
+
+	it("Should disable save button when there are no changes", async () => {
+		render(
+			<JobForm
+				onAdd={mockOnAdd}
+				editingJob={mockEditingJob}
+			/>
+		);
+
+		const saveButton = screen.getByText("Salvar alterações");
+
+		// The button should be disabled initially because there were no changes
+		expect(saveButton).toBeDisabled();
+	});
+
+	it("Should enable save button when making changes", async () => {
+		render(
+			<JobForm
+				onAdd={mockOnAdd}
+				editingJob={mockEditingJob}
+			/>
+		);
+
+		const companyNameInput = screen.getByDisplayValue("Empresa Original");
+		await userEvent.clear(companyNameInput);
+		await userEvent.type(companyNameInput, "Empresa Modificada");
+
+		const saveButton = screen.getByText("Salvar alterações");
+
+		// The button must be enabled after the change
+		expect(saveButton).not.toBeDisabled();
+	});
+
+	it("Should submit the updated data when saving the form.", async () => {
+		render(
+			<JobForm
+				onAdd={mockOnAdd}
+				editingJob={mockEditingJob}
+			/>
+		);
+
+		// Change the company name
+		const companyNameInput = screen.getByDisplayValue("Empresa Original");
+		await userEvent.clear(companyNameInput);
+		await userEvent.type(companyNameInput, "Empresa Modificada");
+
+		// Modify status - Using a different approach by checking which options are available in the dropdown
+		const statusLabel = screen.getByText("Status");
+		const statusSelect =
+			statusLabel.parentElement?.querySelector('[role="combobox"]');
+		if (!statusSelect) throw new Error("Status select not found");
+
+		fireEvent.click(statusSelect);
+
+		// Let's try to find any available option in the dropdown and instead of searching for "Current Job", let's search for any option
+		const statusOptions = await screen.findAllByRole("option");
+
+		if (statusOptions.length === 0)
+			throw new Error("Nenhuma opção de status encontrada");
+
+		// Select the first available option
+		fireEvent.click(statusOptions[0]);
+
+		// Modify the current salary
+		const currentSalaryInput = screen.getByDisplayValue("3500");
+		await userEvent.clear(currentSalaryInput);
+		await userEvent.type(currentSalaryInput, "4000");
+
+		// Save the form
+		const saveButton = screen.getByText("Salvar alterações");
+		fireEvent.click(saveButton);
+
+		await waitFor(() => {
+			expect(mockOnAdd).toHaveBeenCalledWith(
+				expect.objectContaining({
+					id: "job123",
+					company_name: "Empresa Modificada",
+					current_salary: 4000,
+				})
+			);
+		});
+	});
+
+	it("Should handle API errors while editing", async () => {
+		mockOnAdd.mockRejectedValueOnce({
+			response: {
+				status: 500,
+			},
+		});
+
+		render(
+			<JobForm
+				onAdd={mockOnAdd}
+				editingJob={mockEditingJob}
+			/>
+		);
+
+		// Modify the company name to enable the save button
+		const companyNameInput = screen.getByDisplayValue("Empresa Original");
+		await userEvent.clear(companyNameInput);
+		await userEvent.type(companyNameInput, "Empresa Modificada");
+
+		// Save the form
+		const saveButton = screen.getByText("Salvar alterações");
+		fireEvent.click(saveButton);
+
+		await waitFor(() => {
+			expect(toast.error).toHaveBeenCalledWith(
+				"Ocorreu um erro ao atualizar a vaga. Tente novamente."
+			);
+		});
+	});
+
+	it("Should handle authentication errors during editing", async () => {
+		mockOnAdd.mockRejectedValueOnce({
+			response: {
+				status: 401,
+				data: {
+					message: "JWT token expirado!",
+				},
+			},
+		});
+
+		render(
+			<JobForm
+				onAdd={mockOnAdd}
+				editingJob={mockEditingJob}
+			/>
+		);
+
+		// Modify the company name to enable the save button
+		const companyNameInput = screen.getByDisplayValue("Empresa Original");
+		await userEvent.clear(companyNameInput);
+		await userEvent.type(companyNameInput, "Empresa Modificada");
+
+		// Save the form
+		const saveButton = screen.getByText("Salvar alterações");
+		fireEvent.click(saveButton);
+
+		await waitFor(() => {
+			expect(toast.error).toHaveBeenCalledWith(
+				"🔐 Sua sessão expirou por inatividade. Para proteger seus dados, você será redirecionado ao login em 5 segundos...⏳"
 			);
 		});
 	});
