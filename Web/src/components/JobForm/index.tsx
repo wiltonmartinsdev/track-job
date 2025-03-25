@@ -38,6 +38,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import { getCurrencySymbol } from "../../utils/currencyUtils";
 import { Input } from "../ui/input";
 
@@ -283,7 +284,8 @@ export default function JobForm({
 				if (apiError.response?.status === 401) {
 					const errorMessage = apiError.response?.data?.message;
 
-					if (errorMessage === "JWT token não informado!") {
+					// Verifica se a mensagem contém "JWT token" para capturar todas as variações
+					if (errorMessage && errorMessage.includes("JWT token")) {
 						toast.error(
 							"🔐 Você precisa fazer login para proteger seus dados, você será redirecionado ao login em 5 segundos...⏳"
 						);
