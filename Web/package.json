@@ -10,6 +10,7 @@
 		"preview": "vite preview",
 		"test:SignIn": "clear && vitest src/Pages/Auth/SignIn.test.tsx",
 		"test:SignUp": "clear && vitest src/Pages/Auth/SignUp.test.tsx",
+		"test:LogOut": "clear && vitest src/Pages/Home/index.test.tsx",
 		"test:JobForm": "clear && vitest src/components/JobForm/index.test.tsx",
 		"test:ui": "vitest --ui",
 		"test:coverage": "vitest run --coverage"
