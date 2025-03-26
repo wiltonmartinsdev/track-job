@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Controller, FieldErrors, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -11,6 +12,7 @@ import { signInRequest } from "@/api/signInRequest";
 import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/auth";
 import EmailIcon from "@/assets/email-icon.svg";
+import Loading from "@/assets/loading.svg";
 import LoginIcon from "@/assets/login-icon.svg";
 import Logo from "@/assets/logo.svg";
 import OpenPasswordIcon from "@/assets/open-password-icon.svg";
@@ -24,7 +26,7 @@ const SignInValidationFormSchema = z.object({
 		.trim()
 		.min(
 			6,
-			"Ops! Para prosseguir com o login, o campo \"e-mail\" deve conter no mínimo 6 caracteres."
+			'Ops! Para prosseguir com o login, o campo "e-mail" deve conter no mínimo 6 caracteres.'
 		)
 		.email(
 			"Ops! Parece que você adicionou um endereço inválido! Por favor, insira um e-mail válido."
@@ -51,8 +53,8 @@ interface AuthResponse {
 
 export function SignIn() {
 	const { signIn } = useAuth();
-
 	const navigate = useNavigate();
+	const [isLoading, setIsLoading] = useState(false);
 
 	const { handleSubmit, reset, control } = useForm<SignInFormValues>({
 		resolver: zodResolver(SignInValidationFormSchema),
@@ -80,6 +82,8 @@ export function SignIn() {
 
 	async function onSubmit(data: SignInFormValues) {
 		try {
+			setIsLoading(true);
+            
 			const response = await authenticate({
 				email: data.email,
 				password: data.password,
@@ -91,10 +95,14 @@ export function SignIn() {
 			reset();
 		} catch (error) {
 			if (error instanceof Error) {
-				toast.error(error.message);
+				reset();
+				return toast.error(error.message);
 			} else {
-				toast.error("Ocorreu um erro ao fazer login");
+				reset();
+				return toast.error("Ocorreu um erro ao fazer login");
 			}
+		} finally {
+			setIsLoading(false);
 		}
 	}
 
@@ -163,12 +171,32 @@ export function SignIn() {
 					<div className="mt-4">
 						<Button
 							type="submit"
-							className="w-full">
-							<img
-								src={LoginIcon}
-								alt="Ícone de login"
-							/>
-							Entrar
+							className={`w-full ${
+								isLoading ? "cursor-not-allowed" : ""
+							}`}
+							disabled={isLoading}>
+							{isLoading ? (
+								<>
+									<img
+										src={LoginIcon}
+										alt="Ícone de login"
+									/>
+									<span>Entrando</span>
+									<img
+										src={Loading}
+										alt="loading de carregamento"
+										className="animate-spin mr-2"
+									/>
+								</>
+							) : (
+								<>
+									<img
+										src={LoginIcon}
+										alt="Ícone de login"
+									/>
+									<span>Entrar</span>
+								</>
+							)}
 						</Button>
 					</div>
 

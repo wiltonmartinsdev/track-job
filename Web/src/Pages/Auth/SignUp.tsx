@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Controller, FieldErrors, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -12,6 +13,7 @@ import { signUpRequest } from "@/api/signUpRequest";
 import AddUserIcon from "@/assets/add-user-icon.svg";
 import ClosedPasswordIcon from "@/assets/closed-password-icon.svg";
 import EmailIcon from "@/assets/email-icon.svg";
+import Loading from "@/assets/loading.svg";
 import Logo from "@/assets/logo.svg";
 import UserNameIcon from "@/assets/user-name-icon.svg";
 
@@ -55,6 +57,7 @@ export type SignUpFormValues = z.infer<typeof SignUpValidationFormSchema>;
 
 export function SignUp() {
 	const navigate = useNavigate();
+	const [isLoading, setIsLoading] = useState(false);
 
 	const { handleSubmit, reset, control } = useForm<SignUpFormValues>({
 		resolver: zodResolver(SignUpValidationFormSchema),
@@ -81,6 +84,8 @@ export function SignUp() {
 
 	async function onSubmit(data: SignUpFormValues) {
 		try {
+			setIsLoading(true);
+
 			await authenticate({
 				name: data.name,
 				email: data.email,
@@ -91,10 +96,12 @@ export function SignUp() {
 			navigate("/");
 		} catch (error) {
 			if (error instanceof Error) {
-				toast.error(error.message);
+				return toast.error(error.message);
 			} else {
-				toast.error("Ocorreu um erro ao criar a conta");
+				return toast.error("Ocorreu um erro ao criar a conta");
 			}
+		} finally {
+			setIsLoading(false);
 		}
 	}
 
@@ -191,12 +198,32 @@ export function SignUp() {
 					<div className="mt-4">
 						<Button
 							type="submit"
-							className="w-full">
-							Criar sua conta
-							<img
-								src={AddUserIcon}
-								alt="Ícone de login"
-							/>
+							className={`w-full ${
+								isLoading ? "cursor-not-allowed" : ""
+							}`}
+							disabled={isLoading}>
+							{isLoading ? (
+								<>
+									<img
+										src={AddUserIcon}
+										alt="Ícone de cadastro"
+									/>
+									<span>Criando sua conta</span>
+									<img
+										src={Loading}
+										alt="Ícone de carregamento"
+										className="animate-spin mr-2"
+									/>
+								</>
+							) : (
+								<>
+									<img
+										src={AddUserIcon}
+										alt="Ícone de cadastro"
+									/>
+									<span>Criar sua conta</span>
+								</>
+							)}
 						</Button>
 					</div>
 
