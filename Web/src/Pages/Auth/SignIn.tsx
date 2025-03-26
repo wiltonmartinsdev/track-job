@@ -84,6 +84,7 @@ export function SignIn() {
 		try {
 			setIsLoading(true);
             
+            await new Promise((resolve) => setTimeout(resolve, 10000));
 			const response = await authenticate({
 				email: data.email,
 				password: data.password,
@@ -185,7 +186,6 @@ export function SignIn() {
 									<img
 										src={Loading}
 										alt="loading de carregamento"
-										className="animate-spin mr-2"
 									/>
 								</>
 							) : (

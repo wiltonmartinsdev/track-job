@@ -211,8 +211,7 @@ export function SignUp() {
 									<span>Criando sua conta</span>
 									<img
 										src={Loading}
-										alt="Ícone de carregamento"
-										className="animate-spin mr-2"
+										alt="loading de carregamento"
 									/>
 								</>
 							) : (
