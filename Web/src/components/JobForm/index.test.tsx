@@ -441,7 +441,7 @@ describe("JobForm Component - Job Editing Tests (Uploading, Validation and Submi
 
 		await waitFor(() => {
 			expect(toast.error).toHaveBeenCalledWith(
-				"🔐 Sua sessão expirou por inatividade. Para proteger seus dados, você será redirecionado ao login em 5 segundos...⏳"
+				"🔐 Você precisa fazer login para proteger seus dados, você será redirecionado ao login em 5 segundos...⏳"
 			);
 		});
 	});
