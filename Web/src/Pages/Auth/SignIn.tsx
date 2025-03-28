@@ -83,9 +83,8 @@ export function SignIn() {
 	async function onSubmit(data: SignInFormValues) {
 		try {
 			setIsLoading(true);
-            
-            await new Promise((resolve) => setTimeout(resolve, 10000));
-			const response = await authenticate({
+
+            const response = await authenticate({
 				email: data.email,
 				password: data.password,
 			});
