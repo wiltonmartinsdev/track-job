@@ -110,7 +110,7 @@ export function SignIn() {
 		<main className="bg-blue-600 min-h-screen flex items-center justify-center overflow-hidden">
 			<form
 				className="bg-white p-8 rounded-lg shadow-2xl w-10/12 sm:w-3/5 lg:w-[500px] animate__animated animate__backInRight"
-				onSubmit={handleSubmit(onSubmit, showErrorAlerts)} // Desabilita a validação nativa do HTML5
+				onSubmit={handleSubmit(onSubmit, showErrorAlerts)}
 				noValidate>
 				<img
 					src={Logo}

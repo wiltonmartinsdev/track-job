@@ -12,3 +12,29 @@
 body {
 	font-family: "Roboto", sans-serif;
 }
+
+
+/* Adicione estas regras ao seu arquivo CSS existente */
+@media (max-width: 768px) {
+  .animate__animated {
+    animation-duration: 0.5s !important;
+    -webkit-animation-duration: 0.5s !important;
+    animation-fill-mode: both !important;
+    -webkit-animation-fill-mode: both !important;
+    will-change: transform, opacity;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+}
+
+/* Força a aplicação das animações em dispositivos móveis */
+.animate__backInLeft, 
+.animate__backInRight {
+  animation-name: backInLeft !important;
+  -webkit-animation-name: backInLeft !important;
+}
+
+.animate__backInRight {
+  animation-name: backInRight !important;
+  -webkit-animation-name: backInRight !important;
+}
