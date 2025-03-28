@@ -8,7 +8,7 @@
 	"scripts": {
 		"dev": "clear && tsx watch --env-file .env src/server.ts",
 		"build": "tsup --out-dir build",
-		"start": "node build/server.mjs",
+		"start": "node build/server.js",
 		"knex": "node --import tsx ./node_modules/.bin/knex",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
