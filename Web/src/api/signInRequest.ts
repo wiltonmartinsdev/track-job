@@ -1,9 +1,12 @@
+import { api } from "@/lib/axios"
+import { AxiosError } from 'axios';
+
 interface SignInRequestBody {
-    email: string;
-    password: string;
-  }
-  
-  interface AuthResponse {
+  email: string;
+  password: string;
+}
+
+interface AuthResponse {
     token: string;
     user: {
       id: string;
@@ -11,21 +14,19 @@ interface SignInRequestBody {
       email: string;
     }
   }
-  
-  export async function signInRequest({ email, password }: SignInRequestBody): Promise<AuthResponse> {
-    const response = await fetch('http://localhost:3333/sessions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
-  
-    const data = await response.json();
-  
-    if (!response.ok) {
-      throw new Error(data.message || 'Erro ao fazer login');
+
+export async function signInRequest({ email, password }: SignInRequestBody): Promise<AuthResponse> {
+    try {
+        const response = await api.post("/sessions", {
+            email,
+            password
+        });
+        
+        return response.data;
+    } catch (error) {
+        if (error instanceof AxiosError && error.response?.data?.message) {
+            throw new Error(error.response.data.message);
+        }
+        throw new Error("Ops! Não foi possível fazer login. Por favor, verifique sua conexão com a internet e tente novamente.");
     }
-  
-    return data;
-  }
+}
