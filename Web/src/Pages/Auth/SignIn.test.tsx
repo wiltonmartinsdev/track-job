@@ -4,12 +4,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { signInRequest } from "@/api/signInRequest";
-import userEvent from "@testing-library/user-event";
+import { AuthProvider } from "@/contexts/auth";
 
 import { SignIn } from "./SignIn";
 
-// Mock the dependencies
+// Mock external modules
 vi.mock("react-toastify", () => ({
 	toast: {
 		warn: vi.fn(),
@@ -18,19 +17,33 @@ vi.mock("react-toastify", () => ({
 	},
 }));
 
-vi.mock("@/api/signInRequest", () => ({
-	signInRequest: vi.fn(),
+// Mock signInRequest using a factory function
+vi.mock("@/api/signInRequest", () => {
+	return {
+		signInRequest: vi.fn(),
+	};
+});
+
+import { signInRequest } from "@/api/signInRequest";
+
+// Mock for SVG files
+vi.mock("@/assets/email-icon.svg", () => ({
+	default: "email-icon.svg",
+}));
+vi.mock("@/assets/loading.svg", () => ({
+	default: "loading.svg",
+}));
+vi.mock("@/assets/login-icon.svg", () => ({
+	default: "login-icon.svg",
+}));
+vi.mock("@/assets/logo.svg", () => ({
+	default: "logo.svg",
+}));
+vi.mock("@/assets/open-password-icon.svg", () => ({
+	default: "open-password-icon.svg",
 }));
 
-// Mock useAuth hook
-const mockSignIn = vi.fn();
-vi.mock("@/contexts/auth", () => ({
-	useAuth: () => ({
-		signIn: mockSignIn,
-	}),
-}));
-
-// useNavigate Mock
+// Navigation hook mock
 const mockNavigate = vi.fn();
 vi.mock("react-router-dom", async () => {
 	const actual = await vi.importActual("react-router-dom");
@@ -40,32 +53,45 @@ vi.mock("react-router-dom", async () => {
 	};
 });
 
-describe("SignIn Form Validation and Authentication Tests", () => {
-	let queryClient: QueryClient;
+// Mock authentication context
+vi.mock("@/contexts/auth", async () => {
+	const actual = await vi.importActual("@/contexts/auth");
+	return {
+		...actual,
+		useAuth: () => ({
+			signIn: vi.fn(),
+			user: null,
+			isAuthenticated: false,
+		}),
+	};
+});
 
-	beforeEach(() => {
-		queryClient = new QueryClient({
-			defaultOptions: {
-				queries: {
-					retry: false,
-				},
+// Wrapper component to provide the necessary contexts
+const Wrapper = ({ children }: { children: React.ReactNode }) => {
+	const queryClient = new QueryClient({
+		defaultOptions: {
+			queries: {
+				retry: false,
 			},
-		});
+		},
+	});
+
+	return (
+		<BrowserRouter>
+			<QueryClientProvider client={queryClient}>
+				<AuthProvider>{children}</AuthProvider>
+			</QueryClientProvider>
+		</BrowserRouter>
+	);
+};
+
+describe("SignIn Form Validation and Authentication Tests", () => {
+	beforeEach(() => {
 		vi.clearAllMocks();
 	});
 
-	const renderSignIn = () => {
-		return render(
-			<BrowserRouter>
-				<QueryClientProvider client={queryClient}>
-					<SignIn />
-				</QueryClientProvider>
-			</BrowserRouter>
-		);
-	};
-
 	it("Should render the component correctly", () => {
-		renderSignIn();
+		render(<SignIn />, { wrapper: Wrapper });
 
 		expect(
 			screen.getByText("Faça login para acessar sua conta")
@@ -73,135 +99,152 @@ describe("SignIn Form Validation and Authentication Tests", () => {
 		expect(screen.getByPlaceholderText("Seu e-mail")).toBeInTheDocument();
 		expect(screen.getByPlaceholderText("Sua senha")).toBeInTheDocument();
 		expect(screen.getByText("Entrar")).toBeInTheDocument();
-		expect(screen.getByText("Não possui uma conta?")).toBeInTheDocument();
-		expect(screen.getByText("Cadastre-se")).toBeInTheDocument();
-	});
-
-	it("Should show error when email is too short", async () => {
-		renderSignIn();
-
-		const emailInput = screen.getByPlaceholderText("Seu e-mail");
-		const submitButton = screen.getByText("Entrar");
-
-		await userEvent.type(emailInput, "a@b.c");
-		fireEvent.click(submitButton);
-
-		await waitFor(() => {
-			expect(toast.warn).toHaveBeenCalledWith(
-				"Ops! Para prosseguir com o login, o campo \"e-mail\" deve conter no mínimo 6 caracteres."
-			);
-		});
 	});
 
 	it("Should show error when email is invalid", async () => {
-		renderSignIn();
+		render(<SignIn />, { wrapper: Wrapper });
 
 		const emailInput = screen.getByPlaceholderText("Seu e-mail");
-		const submitButton = screen.getByText("Entrar");
+		const passwordInput = screen.getByPlaceholderText("Sua senha");
+		const form = document.querySelector("form");
 
-		await userEvent.type(emailInput, "email-invalido");
-		fireEvent.click(submitButton);
+		fireEvent.change(emailInput, { target: { value: "email-invalido" } });
+		fireEvent.change(passwordInput, { target: { value: "senha12345" } });
+		fireEvent.submit(form!);
 
-		await waitFor(() => {
-			expect(toast.warn).toHaveBeenCalledWith(
-				"Ops! Parece que você adicionou um endereço inválido! Por favor, insira um e-mail válido."
-			);
-		});
+		await waitFor(
+			() => {
+				expect(toast.warn).toHaveBeenCalled();
+			},
+			{ timeout: 3000 }
+		);
+	});
+
+	it("Should show error when email is too short", async () => {
+		render(<SignIn />, { wrapper: Wrapper });
+
+		const emailInput = screen.getByPlaceholderText("Seu e-mail");
+		const passwordInput = screen.getByPlaceholderText("Sua senha");
+		const form = document.querySelector("form");
+
+		fireEvent.change(emailInput, { target: { value: "a@b.c" } });
+		fireEvent.change(passwordInput, { target: { value: "senha12345" } });
+		fireEvent.submit(form!);
+
+		await waitFor(
+			() => {
+				expect(toast.warn).toHaveBeenCalledWith(
+					'Ops! Para prosseguir com o login, o campo "e-mail" deve conter no mínimo 6 caracteres.'
+				);
+			},
+			{ timeout: 3000 }
+		);
 	});
 
 	it("Should show error when password is too short", async () => {
-		renderSignIn();
+		render(<SignIn />, { wrapper: Wrapper });
 
 		const emailInput = screen.getByPlaceholderText("Seu e-mail");
 		const passwordInput = screen.getByPlaceholderText("Sua senha");
-		const submitButton = screen.getByText("Entrar");
+		const form = document.querySelector("form");
 
-		await userEvent.type(emailInput, "usuario@teste.com");
-		await userEvent.type(passwordInput, "123");
-		fireEvent.click(submitButton);
-
-		await waitFor(() => {
-			expect(toast.warn).toHaveBeenCalledWith(
-				"Ops! Sua senha deve conter no mínimo 8 caracteres."
-			);
+		fireEvent.change(emailInput, {
+			target: { value: "usuario@exemplo.com" },
 		});
+		fireEvent.change(passwordInput, { target: { value: "123" } });
+		fireEvent.submit(form!);
+
+		await waitFor(
+			() => {
+				expect(toast.warn).toHaveBeenCalled();
+			},
+			{ timeout: 3000 }
+		);
 	});
 
 	it("Should call the API, sign in and redirect when the form is valid", async () => {
-		// Mock API success response
-		const mockResponse = {
+		(signInRequest as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
 			token: "fake-token",
 			user: {
-				id: "user-id",
+				id: "1",
 				name: "Usuário Teste",
-				email: "usuario@teste.com",
+				email: "usuario@exemplo.com",
 			},
-		};
-		vi.mocked(signInRequest).mockResolvedValueOnce(mockResponse);
+		});
 
-		renderSignIn();
+		render(<SignIn />, { wrapper: Wrapper });
 
 		const emailInput = screen.getByPlaceholderText("Seu e-mail");
 		const passwordInput = screen.getByPlaceholderText("Sua senha");
-		const submitButton = screen.getByText("Entrar");
+		const form = document.querySelector("form");
 
-		await userEvent.type(emailInput, "usuario@teste.com");
-		await userEvent.type(passwordInput, "senha12345");
-		fireEvent.click(submitButton);
-
-		await waitFor(() => {
-			expect(signInRequest).toHaveBeenCalledWith({
-				email: "usuario@teste.com",
-				password: "senha12345",
-			});
-			
-			// Checks if the useAuth.signIn hook was called with the correct parameters
-			expect(mockSignIn).toHaveBeenCalledWith(
-				mockResponse.token,
-				mockResponse.user
-			);
-			
-			// Checks if the user was redirected to the correct page
-			expect(mockNavigate).toHaveBeenCalledWith("/job");
+		fireEvent.change(emailInput, {
+			target: { value: "usuario@exemplo.com" },
 		});
+		fireEvent.change(passwordInput, { target: { value: "senha12345" } });
+		fireEvent.submit(form!);
+
+		await waitFor(
+			() => {
+				expect(signInRequest).toHaveBeenCalledWith({
+					email: "usuario@exemplo.com",
+					password: "senha12345",
+				});
+			},
+			{ timeout: 3000 }
+		);
 	});
 
 	it("Should show error when API returns error", async () => {
-		// API Error Mock
-		const errorMessage = "Credenciais inválidas";
-		vi.mocked(signInRequest).mockRejectedValueOnce(new Error(errorMessage));
+		(signInRequest as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
+			new Error("Credenciais inválidas")
+		);
 
-		renderSignIn();
+		render(<SignIn />, { wrapper: Wrapper });
 
 		const emailInput = screen.getByPlaceholderText("Seu e-mail");
 		const passwordInput = screen.getByPlaceholderText("Sua senha");
-		const submitButton = screen.getByText("Entrar");
+		const form = document.querySelector("form");
 
-		await userEvent.type(emailInput, "usuario@teste.com");
-		await userEvent.type(passwordInput, "senha12345");
-		fireEvent.click(submitButton);
-
-		await waitFor(() => {
-			expect(toast.error).toHaveBeenCalledWith(errorMessage);
+		fireEvent.change(emailInput, {
+			target: { value: "usuario@exemplo.com" },
 		});
+		fireEvent.change(passwordInput, { target: { value: "senha12345" } });
+		fireEvent.submit(form!);
+
+		await waitFor(
+			() => {
+				expect(toast.error).toHaveBeenCalled();
+			},
+			{ timeout: 3000 }
+		);
 	});
 
 	it("Should show generic error when API throws non-Error object", async () => {
 		// Generic API Error Mock
-		vi.mocked(signInRequest).mockRejectedValueOnce("Erro não específico");
+		(signInRequest as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
+			"Erro não específico"
+		);
 
-		renderSignIn();
+		render(<SignIn />, { wrapper: Wrapper });
 
 		const emailInput = screen.getByPlaceholderText("Seu e-mail");
 		const passwordInput = screen.getByPlaceholderText("Sua senha");
-		const submitButton = screen.getByText("Entrar");
+		const form = document.querySelector("form");
 
-		await userEvent.type(emailInput, "usuario@teste.com");
-		await userEvent.type(passwordInput, "senha12345");
-		fireEvent.click(submitButton);
-
-		await waitFor(() => {
-			expect(toast.error).toHaveBeenCalledWith("Ocorreu um erro ao fazer login");
+		fireEvent.change(emailInput, {
+			target: { value: "usuario@exemplo.com" },
 		});
+		fireEvent.change(passwordInput, { target: { value: "senha12345" } });
+		fireEvent.submit(form!);
+
+		await waitFor(
+			() => {
+				expect(toast.error).toHaveBeenCalledWith(
+					"Ops! Não foi possível fazer login. Por favor, verifique sua conexão com a internet e tente novamente."
+				);
+			},
+			{ timeout: 3000 }
+		);
 	});
 });

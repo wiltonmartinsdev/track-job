@@ -99,7 +99,7 @@ export function SignIn() {
 				return toast.error(error.message);
 			} else {
 				reset();
-				return toast.error("Ocorreu um erro ao fazer login");
+				return toast.error("Ops! Não foi possível fazer login. Por favor, verifique sua conexão com a internet e tente novamente.");
 			}
 		} finally {
 			setIsLoading(false);
