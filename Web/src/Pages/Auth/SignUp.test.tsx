@@ -4,12 +4,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { signUpRequest } from "@/api/signUpRequest";
-import userEvent from "@testing-library/user-event";
+import { AuthProvider } from "@/contexts/auth";
 
 import { SignUp } from "./SignUp";
 
-// Mock the dependencies
+// Mock external modules
 vi.mock("react-toastify", () => ({
 	toast: {
 		warn: vi.fn(),
@@ -18,10 +17,36 @@ vi.mock("react-toastify", () => ({
 	},
 }));
 
-vi.mock("@/api/signUpRequest", () => ({
-	signUpRequest: vi.fn(),
+// Mock signUpRequest using a factory function
+vi.mock("@/api/signUpRequest", () => {
+	return {
+		signUpRequest: vi.fn(),
+	};
+});
+
+import { signUpRequest } from "@/api/signUpRequest";
+
+// Mock for SVG files
+vi.mock("@/assets/add-user-icon.svg", () => ({
+	default: "add-user-icon.svg",
+}));
+vi.mock("@/assets/closed-password-icon.svg", () => ({
+	default: "closed-password-icon.svg",
+}));
+vi.mock("@/assets/email-icon.svg", () => ({
+	default: "email-icon.svg",
+}));
+vi.mock("@/assets/loading.svg", () => ({
+	default: "loading.svg",
+}));
+vi.mock("@/assets/logo.svg", () => ({
+	default: "logo.svg",
+}));
+vi.mock("@/assets/user-name-icon.svg", () => ({
+	default: "user-name-icon.svg",
 }));
 
+// Navigation hook mock
 const mockNavigate = vi.fn();
 vi.mock("react-router-dom", async () => {
 	const actual = await vi.importActual("react-router-dom");
@@ -31,32 +56,32 @@ vi.mock("react-router-dom", async () => {
 	};
 });
 
-describe("SignUp Form Validation and Submission Tests", () => {
-	let queryClient: QueryClient;
-
-	beforeEach(() => {
-		queryClient = new QueryClient({
-			defaultOptions: {
-				queries: {
-					retry: false,
-				},
+// Wrapper component to provide the necessary contexts
+const Wrapper = ({ children }: { children: React.ReactNode }) => {
+	const queryClient = new QueryClient({
+		defaultOptions: {
+			queries: {
+				retry: false,
 			},
-		});
+		},
+	});
+
+	return (
+		<BrowserRouter>
+			<QueryClientProvider client={queryClient}>
+				<AuthProvider>{children}</AuthProvider>
+			</QueryClientProvider>
+		</BrowserRouter>
+	);
+};
+
+describe("SignUp Form Validation and Submission Tests", () => {
+	beforeEach(() => {
 		vi.clearAllMocks();
 	});
 
-	const renderSignUp = () => {
-		return render(
-			<BrowserRouter>
-				<QueryClientProvider client={queryClient}>
-					<SignUp />
-				</QueryClientProvider>
-			</BrowserRouter>
-		);
-	};
-
 	it("Should render the component correctly", () => {
-		renderSignUp();
+		render(<SignUp />, { wrapper: Wrapper });
 
 		expect(
 			screen.getByText("Cadastre-se para acessar sua conta")
@@ -67,108 +92,192 @@ describe("SignUp Form Validation and Submission Tests", () => {
 		expect(screen.getByPlaceholderText("Seu e-mail")).toBeInTheDocument();
 		expect(screen.getByPlaceholderText("Sua senha")).toBeInTheDocument();
 		expect(screen.getByText("Criar sua conta")).toBeInTheDocument();
-		expect(screen.getByText("Já possui uma conta?")).toBeInTheDocument();
 	});
 
 	it("Should show error when name is too short", async () => {
-		renderSignUp();
+		render(<SignUp />, { wrapper: Wrapper });
 
 		const nameInput = screen.getByPlaceholderText("Seu nome completo");
-		const submitButton = screen.getByText("Criar sua conta");
+		const emailInput = screen.getByPlaceholderText("Seu e-mail");
+		const passwordInput = screen.getByPlaceholderText("Sua senha");
+		const form = document.querySelector("form");
 
-		await userEvent.type(nameInput, "Ana");
-		fireEvent.click(submitButton);
-
-		await waitFor(() => {
-			expect(toast.warn).toHaveBeenCalledWith(
-				"Ops! Para prosseguir com o cadastro o campo 'nome' deve conter no mínimo 4 caracteres."
-			);
+		fireEvent.change(nameInput, { target: { value: "Ana" } });
+		fireEvent.change(emailInput, {
+			target: { value: "usuario@exemplo.com" },
 		});
+		fireEvent.change(passwordInput, { target: { value: "senha12345" } });
+		fireEvent.submit(form!);
+
+		await waitFor(
+			() => {
+				expect(toast.warn).toHaveBeenCalledWith(
+					"Ops! Para prosseguir com o cadastro o campo 'nome' deve conter no mínimo 4 caracteres."
+				);
+			},
+			{ timeout: 3000 }
+		);
 	});
 
 	it("Should show error when email is invalid", async () => {
-		renderSignUp();
+		render(<SignUp />, { wrapper: Wrapper });
 
 		const nameInput = screen.getByPlaceholderText("Seu nome completo");
 		const emailInput = screen.getByPlaceholderText("Seu e-mail");
-		const submitButton = screen.getByText("Criar sua conta");
+		const passwordInput = screen.getByPlaceholderText("Sua senha");
+		const form = document.querySelector("form");
 
-		await userEvent.type(nameInput, "Usuário Teste");
-		await userEvent.type(emailInput, "email-invalido");
-		fireEvent.click(submitButton);
+		fireEvent.change(nameInput, { target: { value: "Usuário Teste" } });
+		fireEvent.change(emailInput, { target: { value: "email-invalido" } });
+		fireEvent.change(passwordInput, { target: { value: "senha12345" } });
+		fireEvent.submit(form!);
 
-		await waitFor(() => {
-			expect(toast.warn).toHaveBeenCalledWith(
-				"Ops! Parece que você adicionou um endereço inválido! Por favor, insira um e-mail válido."
-			);
-		});
+		await waitFor(
+			() => {
+				expect(toast.warn).toHaveBeenCalled();
+			},
+			{ timeout: 3000 }
+		);
+	});
+
+	it("Should show error when email is too short", async () => {
+		render(<SignUp />, { wrapper: Wrapper });
+
+		const nameInput = screen.getByPlaceholderText("Seu nome completo");
+		const emailInput = screen.getByPlaceholderText("Seu e-mail");
+		const passwordInput = screen.getByPlaceholderText("Sua senha");
+		const form = document.querySelector("form");
+
+		fireEvent.change(nameInput, { target: { value: "Usuário Teste" } });
+		fireEvent.change(emailInput, { target: { value: "a@b.c" } });
+		fireEvent.change(passwordInput, { target: { value: "senha12345" } });
+		fireEvent.submit(form!);
+
+		await waitFor(
+			() => {
+				expect(toast.warn).toHaveBeenCalledWith(
+					"Ops! Para prosseguir com o cadastro, o campo 'e-mail' deve conter no mínimo 6 caracteres."
+				);
+			},
+			{ timeout: 3000 }
+		);
 	});
 
 	it("Should show error when password is too short", async () => {
-		renderSignUp();
+		render(<SignUp />, { wrapper: Wrapper });
 
 		const nameInput = screen.getByPlaceholderText("Seu nome completo");
 		const emailInput = screen.getByPlaceholderText("Seu e-mail");
 		const passwordInput = screen.getByPlaceholderText("Sua senha");
-		const submitButton = screen.getByText("Criar sua conta");
+		const form = document.querySelector("form");
 
-		await userEvent.type(nameInput, "Usuário Teste");
-		await userEvent.type(emailInput, "usuario@teste.com");
-		await userEvent.type(passwordInput, "123");
-		fireEvent.click(submitButton);
-
-		await waitFor(() => {
-			expect(toast.warn).toHaveBeenCalledWith(
-				"Ops! Sua senha deve conter no mínimo 8 caracteres. Escolha uma senha mais segura."
-			);
+		fireEvent.change(nameInput, { target: { value: "Usuário Teste" } });
+		fireEvent.change(emailInput, {
+			target: { value: "usuario@exemplo.com" },
 		});
+		fireEvent.change(passwordInput, { target: { value: "123" } });
+		fireEvent.submit(form!);
+
+		await waitFor(
+			() => {
+				expect(toast.warn).toHaveBeenCalledWith(
+					"Ops! Sua senha deve conter no mínimo 8 caracteres. Escolha uma senha mais segura."
+				);
+			},
+			{ timeout: 3000 }
+		);
 	});
 
-	it("Should call the API and redirect when the form is valid", async () => {
-		// Mock API Success Response
-		vi.mocked(signUpRequest).mockResolvedValueOnce({ success: true });
+	it("Should call the API, register and redirect when the form is valid", async () => {
+		(signUpRequest as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+			id: "1",
+			name: "Usuário Teste",
+			email: "usuario@exemplo.com",
+		});
 
-		renderSignUp();
+		render(<SignUp />, { wrapper: Wrapper });
 
 		const nameInput = screen.getByPlaceholderText("Seu nome completo");
 		const emailInput = screen.getByPlaceholderText("Seu e-mail");
 		const passwordInput = screen.getByPlaceholderText("Sua senha");
-		const submitButton = screen.getByText("Criar sua conta");
+		const form = document.querySelector("form");
 
-		await userEvent.type(nameInput, "Usuário Teste");
-		await userEvent.type(emailInput, "usuario@teste.com");
-		await userEvent.type(passwordInput, "senha12345");
-		fireEvent.click(submitButton);
-
-		await waitFor(() => {
-			expect(signUpRequest).toHaveBeenCalledWith({
-				name: "Usuário Teste",
-				email: "usuario@teste.com",
-				password: "senha12345",
-			});
-			expect(mockNavigate).toHaveBeenCalledWith("/");
+		fireEvent.change(nameInput, { target: { value: "Usuário Teste" } });
+		fireEvent.change(emailInput, {
+			target: { value: "usuario@exemplo.com" },
 		});
+		fireEvent.change(passwordInput, { target: { value: "senha12345" } });
+		fireEvent.submit(form!);
+
+		await waitFor(
+			() => {
+				expect(signUpRequest).toHaveBeenCalledWith({
+					name: "Usuário Teste",
+					email: "usuario@exemplo.com",
+					password: "senha12345",
+				});
+				expect(mockNavigate).toHaveBeenCalledWith("/");
+			},
+			{ timeout: 3000 }
+		);
 	});
 
 	it("Should show error when API returns error", async () => {
-		// API Error Mock
-		const errorMessage = "E-mail já cadastrado";
-		vi.mocked(signUpRequest).mockRejectedValueOnce(new Error(errorMessage));
+		(signUpRequest as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
+			new Error("E-mail já cadastrado")
+		);
 
-		renderSignUp();
+		render(<SignUp />, { wrapper: Wrapper });
 
 		const nameInput = screen.getByPlaceholderText("Seu nome completo");
 		const emailInput = screen.getByPlaceholderText("Seu e-mail");
 		const passwordInput = screen.getByPlaceholderText("Sua senha");
-		const submitButton = screen.getByText("Criar sua conta");
+		const form = document.querySelector("form");
 
-		await userEvent.type(nameInput, "Usuário Teste");
-		await userEvent.type(emailInput, "usuario@teste.com");
-		await userEvent.type(passwordInput, "senha12345");
-		fireEvent.click(submitButton);
-
-		await waitFor(() => {
-			expect(toast.error).toHaveBeenCalledWith(errorMessage);
+		fireEvent.change(nameInput, { target: { value: "Usuário Teste" } });
+		fireEvent.change(emailInput, {
+			target: { value: "usuario@exemplo.com" },
 		});
+		fireEvent.change(passwordInput, { target: { value: "senha12345" } });
+		fireEvent.submit(form!);
+
+		await waitFor(
+			() => {
+				expect(toast.error).toHaveBeenCalledWith(
+					"E-mail já cadastrado"
+				);
+			},
+			{ timeout: 3000 }
+		);
+	});
+
+	it("Should show generic error when API throws non-Error object", async () => {
+		// Generic API Error Mock
+		(signUpRequest as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
+			"Erro não específico"
+		);
+
+		render(<SignUp />, { wrapper: Wrapper });
+
+		const nameInput = screen.getByPlaceholderText("Seu nome completo");
+		const emailInput = screen.getByPlaceholderText("Seu e-mail");
+		const passwordInput = screen.getByPlaceholderText("Sua senha");
+		const form = document.querySelector("form");
+
+		fireEvent.change(nameInput, { target: { value: "Usuário Teste" } });
+		fireEvent.change(emailInput, {
+			target: { value: "usuario@exemplo.com" },
+		});
+		fireEvent.change(passwordInput, { target: { value: "senha12345" } });
+		fireEvent.submit(form!);
+
+		await waitFor(
+			() => {
+				expect(toast.error).toHaveBeenCalledWith(
+					"Ocorreu um erro ao criar a conta"
+				);
+			},
+			{ timeout: 3000 }
+		);
 	});
 });

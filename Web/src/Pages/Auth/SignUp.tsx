@@ -36,7 +36,7 @@ export const SignUpValidationFormSchema = z.object({
 		.trim()
 		.min(
 			6,
-			"Ops! Para prosseguir com o cadastro, o campo “e-mail” deve conter no mínimo 6 caracteres."
+			"Ops! Para prosseguir com o cadastro, o campo 'e-mail' deve conter no mínimo 6 caracteres."
 		)
 		.email(
 			"Ops! Parece que você adicionou um endereço inválido! Por favor, insira um e-mail válido."
