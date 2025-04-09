@@ -255,7 +255,7 @@ describe("SignUp Form Validation and Submission Tests", () => {
 		// Generic API Error Mock
 		(signUpRequest as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
 			new Error(
-				"Ops! Não foi possível criar sua conta no momento. Por favor, verifique sua conexão com a internet e tente novamente em instantes."
+				"Ops! Não foi possível criar sua conta no momento. Verifique sua conexão ou tente mais tarde caso o servidor esteja indisponível."
 			)
 		);
 
@@ -276,7 +276,7 @@ describe("SignUp Form Validation and Submission Tests", () => {
 		await waitFor(
 			() => {
 				expect(toast.error).toHaveBeenCalledWith(
-					"Ops! Não foi possível criar sua conta no momento. Por favor, verifique sua conexão com a internet e tente novamente em instantes."
+					"Ops! Não foi possível criar sua conta no momento. Verifique sua conexão ou tente mais tarde caso o servidor esteja indisponível."
 				);
 			},
 			{ timeout: 3000 }

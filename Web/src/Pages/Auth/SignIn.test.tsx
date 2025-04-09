@@ -221,10 +221,9 @@ describe("SignIn Form Validation and Authentication Tests", () => {
 	});
 
 	it("Should show generic error when API throws non-Error object", async () => {
-		// Modificando o mock para lançar um Error com a mensagem genérica
-		// que seria lançada pelo signInRequest
+        // Generic API Error Mock
 		(signInRequest as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
-			new Error("Ops! Não foi possível fazer login. Por favor, verifique sua conexão com a internet e tente novamente.")
+			new Error("Ops! Não foi possível fazer login. Verifique sua conexão, suas credenciais ou tente mais tarde caso o servidor esteja indisponível.")
 		);
 
 		render(<SignIn />, { wrapper: Wrapper });
@@ -242,7 +241,7 @@ describe("SignIn Form Validation and Authentication Tests", () => {
 		await waitFor(
 			() => {
 				expect(toast.error).toHaveBeenCalledWith(
-					"Ops! Não foi possível fazer login. Por favor, verifique sua conexão com a internet e tente novamente."
+					"Ops! Não foi possível fazer login. Verifique sua conexão, suas credenciais ou tente mais tarde caso o servidor esteja indisponível."
 				);
 			},
 			{ timeout: 3000 }
