@@ -254,7 +254,9 @@ describe("SignUp Form Validation and Submission Tests", () => {
 	it("Should show generic error when API throws non-Error object", async () => {
 		// Generic API Error Mock
 		(signUpRequest as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
-			"Erro não específico"
+			new Error(
+				"Ops! Não foi possível criar sua conta no momento. Por favor, verifique sua conexão com a internet e tente novamente em instantes."
+			)
 		);
 
 		render(<SignUp />, { wrapper: Wrapper });
@@ -274,7 +276,7 @@ describe("SignUp Form Validation and Submission Tests", () => {
 		await waitFor(
 			() => {
 				expect(toast.error).toHaveBeenCalledWith(
-					"Ocorreu um erro ao criar a conta"
+					"Ops! Não foi possível criar sua conta no momento. Por favor, verifique sua conexão com a internet e tente novamente em instantes."
 				);
 			},
 			{ timeout: 3000 }
