@@ -14,6 +14,6 @@ export async function signInRequest({ email, password }: SignInRequestBody): Pro
         if (error instanceof AxiosError && error.response?.data?.message) {
             throw new Error(error.response.data.message);
         }
-        throw new Error("Ops! Não foi possível fazer login. Por favor, verifique sua conexão com a internet e tente novamente.");
+        throw new Error("Ops! Não foi possível fazer login. Verifique sua conexão, suas credenciais ou tente mais tarde caso o servidor esteja indisponível.");
     }
 }
