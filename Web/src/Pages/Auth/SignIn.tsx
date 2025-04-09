@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signInRequest } from "@/api/signInRequest";
 import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/auth";
+import { AuthResponse } from "@/types/auth";
 import EmailIcon from "@/assets/email-icon.svg";
 import Loading from "@/assets/loading.svg";
 import LoginIcon from "@/assets/login-icon.svg";
@@ -41,15 +42,6 @@ const SignInValidationFormSchema = z.object({
 });
 
 type SignInFormValues = z.infer<typeof SignInValidationFormSchema>;
-
-interface AuthResponse {
-	token: string;
-	user: {
-		id: string;
-		name: string;
-		email: string;
-	};
-}
 
 export function SignIn() {
 	const { signIn } = useAuth();
@@ -83,23 +75,18 @@ export function SignIn() {
 	async function onSubmit(data: SignInFormValues) {
 		try {
 			setIsLoading(true);
-
-            const response = await authenticate({
+			const response = await authenticate({
 				email: data.email,
 				password: data.password,
 			});
 			signIn(response.token, response.user);
-
 			navigate("/job");
-
 			reset();
 		} catch (error) {
+			reset();
+
 			if (error instanceof Error) {
-				reset();
 				return toast.error(error.message);
-			} else {
-				reset();
-				return toast.error("Ops! Não foi possível fazer login. Por favor, verifique sua conexão com a internet e tente novamente.");
 			}
 		} finally {
 			setIsLoading(false);

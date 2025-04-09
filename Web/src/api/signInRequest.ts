@@ -1,19 +1,6 @@
 import { api } from "@/lib/axios"
 import { AxiosError } from 'axios';
-
-interface SignInRequestBody {
-  email: string;
-  password: string;
-}
-
-interface AuthResponse {
-    token: string;
-    user: {
-      id: string;
-      name: string;
-      email: string;
-    }
-  }
+import { SignInRequestBody, AuthResponse } from "@/types/auth";
 
 export async function signInRequest({ email, password }: SignInRequestBody): Promise<AuthResponse> {
     try {
