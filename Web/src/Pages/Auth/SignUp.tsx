@@ -95,10 +95,9 @@ export function SignUp() {
 
 			navigate("/");
 		} catch (error) {
+			reset();
 			if (error instanceof Error) {
-				return toast.error(error.message);
-			} else {
-				return toast.error("Ocorreu um erro ao criar a conta");
+				toast.error(error.message);
 			}
 		} finally {
 			setIsLoading(false);

@@ -1,13 +1,8 @@
 import { api } from "@/lib/axios"
 import { AxiosError } from 'axios';
+import { SignUpRequestBody, SignUpResponse } from "@/types/auth";
 
-export interface SignUpInBody {
-    name: string;
-    email: string;
-    password: string;
-}
-
-export async function signUpRequest({ name, email, password }: SignUpInBody) {
+export async function signUpRequest({ name, email, password }: SignUpRequestBody): Promise<SignUpResponse> {
     try {
         const response = await api.post("/user", {
             name,
