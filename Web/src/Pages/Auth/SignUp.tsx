@@ -25,8 +25,12 @@ export const SignUpValidationFormSchema = z.object({
 		})
 		.trim()
 		.min(
-			4,
-			"Ops! Para prosseguir com o cadastro o campo 'nome' deve conter no mínimo 4 caracteres."
+			3,
+			"Ops! Para prosseguir com o cadastro o campo 'nome' deve conter no mínimo 3 caracteres."
+		)
+		.refine(
+			(char) => char.includes(" "),
+			"Por favor, insira seu nome completo (nome e sobrenome) para prosseguir com o cadastro."
 		),
 	email: z
 		.string({
