@@ -221,9 +221,10 @@ describe("SignIn Form Validation and Authentication Tests", () => {
 	});
 
 	it("Should show generic error when API throws non-Error object", async () => {
-		// Generic API Error Mock
+		// Modificando o mock para lançar um Error com a mensagem genérica
+		// que seria lançada pelo signInRequest
 		(signInRequest as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
-			"Erro não específico"
+			new Error("Ops! Não foi possível fazer login. Por favor, verifique sua conexão com a internet e tente novamente.")
 		);
 
 		render(<SignIn />, { wrapper: Wrapper });
