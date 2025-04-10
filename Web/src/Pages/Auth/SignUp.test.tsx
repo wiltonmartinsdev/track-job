@@ -94,7 +94,7 @@ describe("SignUp Form Validation and Submission Tests", () => {
 		expect(screen.getByText("Criar sua conta")).toBeInTheDocument();
 	});
 
-	it("Should show error when name is too short", async () => {
+	it("Should display error message when user does not enter full name (first and last name)", async () => {
 		render(<SignUp />, { wrapper: Wrapper });
 
 		const nameInput = screen.getByPlaceholderText("Seu nome completo");
@@ -112,7 +112,34 @@ describe("SignUp Form Validation and Submission Tests", () => {
 		await waitFor(
 			() => {
 				expect(toast.warn).toHaveBeenCalledWith(
-					"Ops! Para prosseguir com o cadastro o campo 'nome' deve conter no mínimo 4 caracteres."
+					"Por favor, insira seu nome completo (nome e sobrenome) para prosseguir com o cadastro."
+				);
+			},
+			{ timeout: 3000 }
+		);
+	});
+
+	it("Should show error when name is too short even with space", async () => {
+		render(<SignUp />, { wrapper: Wrapper });
+
+		const nameInput = screen.getByPlaceholderText("Seu nome completo");
+		const emailInput = screen.getByPlaceholderText("Seu e-mail");
+		const passwordInput = screen.getByPlaceholderText("Sua senha");
+		const form = document.querySelector("form");
+
+		// Using a name with a space but less than 3 characters in total
+		// "A" has only 2 characters (including the space)
+		fireEvent.change(nameInput, { target: { value: "A " } });
+		fireEvent.change(emailInput, {
+			target: { value: "usuario@exemplo.com" },
+		});
+		fireEvent.change(passwordInput, { target: { value: "senha12345" } });
+		fireEvent.submit(form!);
+
+		await waitFor(
+			() => {
+				expect(toast.warn).toHaveBeenCalledWith(
+					"Ops! Para prosseguir com o cadastro o campo 'nome' deve conter no mínimo 3 caracteres."
 				);
 			},
 			{ timeout: 3000 }
