@@ -265,4 +265,4 @@ Esses aprendizados contribuíram não apenas para o desenvolvimento técnico do 
 
 Se você tiver alguma dúvida ou sugestão, sinta-se à vontade para entrar em contato.
 
-Desenvolvido com ❤️ pelo dev: <a href="https://devwiltonmartins.vercel.app" target="_blank">Wilton Lira Martins</a>
+Desenvolvido com ❤️ pelo dev: <a href="https://devwiltonmartins.vercel.app" target="_blank" rel="noopener noreferrer">Wilton Lira Martins</a>
