@@ -14,6 +14,16 @@
 
 - O Track Job representa não apenas minha habilidade técnica como desenvolvedor, mas também minha capacidade de identificar problemas reais e criar soluções eficientes através da programação.
 
+## 🎬 Veja em Ação
+
+<p align="center">
+  <img src="./Web/src/assets/track-job-demo.gif" alt="Demonstração do Track Job" width="600"/>
+</p>
+
+<p align="center">
+  <i>Demonstração das principais funcionalidades do Track Job</i>
+</p>
+
 ### ✨ Principais Funcionalidades
 
 - **Cadastro e autenticação segura** de usuários com validação em tempo real.
@@ -255,4 +265,4 @@ Esses aprendizados contribuíram não apenas para o desenvolvimento técnico do 
 
 Se você tiver alguma dúvida ou sugestão, sinta-se à vontade para entrar em contato.
 
-Desenvolvido com ❤️ pelo dev: [Wilton Lira Martins](https://devwiltonmartins.vercel.app)
+Desenvolvido com ❤️ pelo dev: <a href="https://devwiltonmartins.vercel.app" target="_blank">Wilton Lira Martins</a>
