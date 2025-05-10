@@ -215,7 +215,6 @@ export default function JobForm({
 	editingJob,
 	isInModal = false,
 }: JobFormProps) {
-
 	const [open, setOpen] = useState(false);
 	const [hasChanges, setHasChanges] = useState(false);
 	const [originalValues, setOriginalValues] = useState<Job | null>(null);
@@ -271,7 +270,7 @@ export default function JobForm({
 				current_salary: Number(data.current_salary),
 			};
 
-			// Prosseguir com a criação ou atualização da vaga
+			// Prosseguir com a atualização
 			await onAdd(formattedData);
 			reset();
 			setOpen(false);
