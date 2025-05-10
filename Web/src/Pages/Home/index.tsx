@@ -88,6 +88,8 @@ export default function Home() {
 
 	const editingJob = jobs.find((job) => job.id === jobEditionId) || null;
 
+    console.log("editingJob =>", editingJob)
+
 	useEffect(() => {
 		loadJobs();
 	}, []);
