@@ -95,8 +95,11 @@
     ```
     - Este comando iniciará o banco de dados PostgreSQL em segundo plano conforme definido no arquivo docker-compose.yml.
 
-- Migrates do Prisma:
-    - Uma migração já foi criada, não precisando criar/configurar uma nova.
+- Execute as Migrates do Prisma:
+
+    ```bash
+    npx prisma migrate dev
+    ```
 
 ## 🔐 Variáveis de Ambiente
 
