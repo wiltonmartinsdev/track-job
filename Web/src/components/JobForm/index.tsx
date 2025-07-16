@@ -174,6 +174,10 @@ const brazilianStates = [
 		label: "Piauí",
 	},
 	{
+		value: "Paraná",
+		label: "Paraná",
+	},
+	{
 		value: "Rio de Janeiro",
 		label: "Rio de Janeiro",
 	},
