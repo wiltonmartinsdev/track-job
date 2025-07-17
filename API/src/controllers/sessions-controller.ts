@@ -8,7 +8,11 @@ import { prisma } from "../database/prisma";
 import AppError from "../utils/AppError";
 
 export default class SessionsController {
-	async create(request: Request, response: Response, next: NextFunction) {
+	async create(
+		request: Request,
+		response: Response,
+		next: NextFunction
+	): Promise<void> {
 		try {
 			const bodySchema = z.object({
 				email: z
@@ -60,16 +64,30 @@ export default class SessionsController {
 				);
 			}
 
-			const { secret, expiresIn } = authConfig.jwt;
+			const { secret, expiresIn, signOptions } = authConfig.jwt;
 
-			const token = sign({}, secret, {
+			// Payload do token com informações adicionais
+			const payload = {
+				email: user.email,
+				name: user.name,
+			};
+
+			// Gera o token com configurações de segurança aprimoradas
+			const token = sign(payload, secret, {
+				...signOptions,
 				subject: String(user.id),
 				expiresIn,
 			});
 
 			const { password: hashedPassword, ...userWithoutPassword } = user;
 
-			return response.json({user: userWithoutPassword, token });
+			response.json({
+				success: true,
+				message: "Login realizado com sucesso",
+				user: userWithoutPassword,
+				token,
+				expiresIn: authConfig.jwt.expiresIn,
+			});
 		} catch (error) {
 			next(error);
 		}
