@@ -1,10 +1,29 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "../Pages/Home";
 
 export default function AppRoutes() {
-    return (
-        <Routes>
-            <Route path="/job" element={<Home />} />
-        </Routes>
-    );
+	console.log("🏠 AppRoutes renderizado - usuário está autenticado");
+
+	return (
+		<Routes>
+			<Route
+				path="/home"
+				element={<Home />}
+			/>
+			<Route
+				path="/job"
+				element={<Home />}
+			/>
+			{/* Redireciona qualquer rota para /home se estiver autenticado */}
+			<Route
+				path="*"
+				element={
+					<Navigate
+						to="/home"
+						replace
+					/>
+				}
+			/>
+		</Routes>
+	);
 }

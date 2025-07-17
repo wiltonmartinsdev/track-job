@@ -28,11 +28,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		const storedUser = localStorage.getItem("@TrackJob:user");
 		const storedToken = localStorage.getItem("@TrackJob:token");
 
+		console.log("🔍 Verificação inicial de persistência:", {
+			hasStoredUser: !!storedUser,
+			hasStoredToken: !!storedToken,
+			storedUserValue: storedUser,
+			storedTokenValue: storedToken
+				? `${storedToken.substring(0, 20)}...`
+				: null,
+		});
+
 		// Verifica se ambos token e user existem
 		if (storedUser && storedToken) {
 			try {
-				return JSON.parse(storedUser);
-			} catch {
+				const parsedUser = JSON.parse(storedUser);
+				console.log(
+					"✅ Usuário restaurado automaticamente:",
+					parsedUser
+				);
+				return parsedUser;
+			} catch (error) {
+				console.error("❌ Erro ao fazer parse do usuário:", error);
 				// Se houver erro ao fazer parse, limpa os dados
 				localStorage.removeItem("@TrackJob:token");
 				localStorage.removeItem("@TrackJob:user");
@@ -40,11 +55,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 			}
 		}
 
+		console.log("🚫 Nenhum usuário restaurado - dados incompletos");
 		return null;
 	});
 
 	const navigate = useNavigate();
 	const isAuthenticated = !!user;
+
+	// Efeito para navegar automaticamente quando o usuário for restaurado
+	useEffect(() => {
+		if (user && window.location.pathname === "/") {
+			console.log("🏠 Usuário restaurado - redirecionando para /home");
+			navigate("/home", { replace: true });
+		}
+	}, [user, navigate]);
 
 	const signOut = useCallback(() => {
 		localStorage.removeItem("@TrackJob:token");
@@ -76,9 +100,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	}, [user, signOut]);
 
 	function signIn(token: string, user: User) {
+		console.log("🔐 Fazendo login e salvando dados:", {
+			token: token ? `${token.substring(0, 20)}...` : null,
+			user: user,
+		});
+
 		localStorage.setItem("@TrackJob:token", token);
 		localStorage.setItem("@TrackJob:user", JSON.stringify(user));
 		setUser(user);
+
+		// Verificação imediata após salvar
+		const savedToken = localStorage.getItem("@TrackJob:token");
+		const savedUser = localStorage.getItem("@TrackJob:user");
+
+		console.log("✅ Dados salvos no localStorage:", {
+			tokenSaved: !!savedToken,
+			userSaved: !!savedUser,
+			tokenMatches: savedToken === token,
+			userMatches: savedUser === JSON.stringify(user),
+		});
+
 		navigate("/home");
 	}
 
