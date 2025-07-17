@@ -41,10 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		if (storedUser && storedToken) {
 			try {
 				const parsedUser = JSON.parse(storedUser);
-				console.log(
-					"✅ Usuário restaurado automaticamente:",
-					parsedUser
-				);
+                
 				return parsedUser;
 			} catch (error) {
 				console.error("❌ Erro ao fazer parse do usuário:", error);
@@ -55,7 +52,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 			}
 		}
 
-		console.log("🚫 Nenhum usuário restaurado - dados incompletos");
 		return null;
 	});
 

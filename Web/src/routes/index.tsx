@@ -5,16 +5,7 @@ import { SignIn } from "@/Pages/Auth/SignIn";
 import { SignUp } from "@/Pages/Auth/SignUp";
 
 export function Routes() {
-	const { user, isAuthenticated } = useAuth();
-
-	console.log("🛣️ Renderização das rotas:", {
-		hasUser: !!user,
-		isAuthenticated,
-		userDetails: user
-			? { id: user.id, name: user.name, email: user.email }
-			: null,
-		timestamp: new Date().toISOString(),
-	});
+	const { user } = useAuth();
 
 	return (
 		<RouterRoutes>
